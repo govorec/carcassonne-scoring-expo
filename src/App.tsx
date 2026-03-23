@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, useWindowDimensions, TextInput, ScrollVie
 import { Meeple } from './components/Meeple';
 import { Settings, ArrowLeft, RotateCcw, ChevronLeft, ChevronRight, Loader2, History } from 'lucide-react-native';
 import Animated, { FadeIn, FadeOut, SlideInRight, SlideOutRight } from 'react-native-reanimated';
-import './global.css';
+import '../global.css';
 
 type Screen = 'start' | 'scoring' | 'loading' | 'history';
 
