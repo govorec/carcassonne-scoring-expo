@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-meeple-red: #B23B2B;
+  --color-meeple-green: #2EB84B;
+  --color-meeple-black: #1A1A1A;
+  --color-meeple-pink: #E678A7;
+  --color-meeple-blue: #1E40AF;
+  --color-meeple-yellow: #FACC15;
+}
+
+html, body, #root {
+  height: 100%;
+  min-height: 100dvh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: black;
+}
+
+body, #root {
+  display: flex;
+  flex-direction: column;
+}
+
+body {
+  @apply bg-black text-white antialiased;
+  font-family: var(--font-sans);
+}
+
+.bg-start-screen {
+  background-image: url('/assets/Gemini_bg.png');
+  background-size: cover;
+  background-position: center;
+}

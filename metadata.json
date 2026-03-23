@@ -1,0 +1,5 @@
+{
+  "name": "Carcassonne Scoring",
+  "description": "Score keeping app for Carcassonne board game. ",
+  "requestFramePermissions": []
+}
