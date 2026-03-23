@@ -25,6 +25,7 @@
     },
     "plugins": [
       "expo-asset"
-    ]
+    ],
+    "newArchEnabled": false
   }
 }
