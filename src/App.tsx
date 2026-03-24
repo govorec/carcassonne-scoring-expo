@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { View, Text, TouchableOpacity, useWindowDimensions, TextInput, ScrollView, Animated as RNAnimated, Easing } from 'react-native';
+import { View, Text, TouchableOpacity, useWindowDimensions, TextInput, ScrollView, Animated as RNAnimated, Easing, ImageBackground, FlatList } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Image } from 'expo-image';
 import { Meeple } from './components/Meeple';
 import { Settings, ArrowLeft, RotateCcw, ChevronLeft, ChevronRight, Loader2, History } from 'lucide-react-native';
 import Animated, { FadeIn, FadeOut, SlideInRight, SlideOutRight } from 'react-native-reanimated';
@@ -10,6 +12,7 @@ type Screen = 'start' | 'scoring' | 'loading' | 'history';
 interface Player {
   id: number;
   color: string;
+  image?: any;
   score: number;
   name: string;
 }
@@ -19,20 +22,21 @@ interface HistoryEntry {
   timestamp: number;
   playerId: number;
   playerColor: string;
+  playerImage?: any;
   value: number;
   cumulativeScore: number;
 }
 
 const COLORS = [
-  { name: 'Red', hex: '#B23B2B' },
-  { name: 'Green', hex: '#2EB84B' },
-  { name: 'Blue', hex: '#1E40AF' },
-  { name: 'Black', hex: '#1A1A1A' },
-  { name: 'Yellow', hex: '#FACC15' },
-  { name: 'Gray', hex: '#6B7280' },
-  { name: 'Pink', hex: '#E678A7' },
-  { name: 'Orange', hex: '#F97316' },
-  { name: 'Brown', hex: '#78350F' },
+  { name: 'Red', hex: '#B23B2B', image: require('../assets/Meeple_red_Vectorizer-AI.svg') },
+  { name: 'Green', hex: '#2EB84B', image: require('../assets/Meeple_green_Vectorizer-AI.svg') },
+  { name: 'Blue', hex: '#1E40AF', image: require('../assets/Meeple_blue_Vectorizer-AI.svg') },
+  { name: 'Black', hex: '#1A1A1A', image: require('../assets/Meeple_black_Vectorizer-AI.svg') },
+  { name: 'Yellow', hex: '#FACC15', image: require('../assets/Meeple_yellow_Vectorizer-AI.svg') },
+  { name: 'Gray', hex: '#6B7280', image: require('../assets/Meeple_gray_Vectorizer-AI.svg') },
+  { name: 'Pink', hex: '#E678A7', image: require('../assets/Meeple_pink_Vectorizer-AI.svg') },
+  { name: 'Orange', hex: '#F97316', image: require('../assets/Meeple_orange_Vectorizer-AI.svg') },
+  { name: 'Brown', hex: '#78350F', image: require('../assets/Meeple_brown_Vectorizer-AI.svg') },
 ];
 
 export default function App() {
@@ -116,12 +120,12 @@ export default function App() {
     const otherSelectedHexes = selectedColors
       .filter((_, i) => i !== index)
       .map(c => c.hex);
-    
+
     const availablePool = COLORS.filter(c => !otherSelectedHexes.includes(c.hex));
     const poolIndex = availablePool.findIndex(c => c.hex === currentColor.hex);
     const nextPoolIndex = (poolIndex + 1) % availablePool.length;
     const nextColor = availablePool[nextPoolIndex];
-    
+
     const newSelected = [...selectedColors];
     newSelected[index] = nextColor;
     setSelectedColors(newSelected);
@@ -131,6 +135,7 @@ export default function App() {
     const initialPlayers = selectedColors.map((color, index) => ({
       id: index,
       color: color.hex,
+      image: color.image,
       score: 0,
       name: isCustomNamingEnabled ? (customNames[index] || color.name) : color.name,
     }));
@@ -139,7 +144,7 @@ export default function App() {
   };
 
   const updateScore = (id: number, delta: number) => {
-    setPlayers(prev => prev.map(p => 
+    setPlayers(prev => prev.map(p =>
       p.id === id ? { ...p, score: Math.max(0, p.score + delta) } : p
     ));
 
@@ -162,6 +167,7 @@ export default function App() {
             timestamp: Date.now(),
             playerId: id,
             playerColor: player.color,
+            playerImage: player.image,
             value: finalSum,
             cumulativeScore: player.score,
           };
@@ -215,26 +221,31 @@ export default function App() {
   }, [players.length, windowHeight]);
 
   return (
-    <View className="flex-1 w-full max-w-md mx-auto relative overflow-hidden bg-black flex-col">
+    <ImageBackground
+      source={require('../assets/Gemini_bg.png')}
+      style={{ flex: 1 }}
+      resizeMode="cover"
+    >
+      <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.6)' }} />
       {screen === 'loading' && (
         <Animated.View
           entering={FadeIn}
           exiting={FadeOut}
-          className="flex-1 items-center justify-center bg-neutral-950 p-8"
+          style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, backgroundColor: 'rgba(0,0,0,0.8)' }}
         >
           <RNAnimated.View style={{ transform: [{ rotate: spin }], marginBottom: 24, opacity: 0.4 }}>
             <Loader2 color="white" size={48} />
           </RNAnimated.View>
-          <Text className="text-xl text-white font-bold tracking-tight mb-2 text-center">Initializing</Text>
-          <Text className="text-neutral-500 text-sm mb-8 text-center">Preparing board game scoring...</Text>
-          
+          <Text style={{ fontSize: 20, color: '#FFF', fontWeight: 'bold', letterSpacing: 1, marginBottom: 8, textAlign: 'center' }}>Initializing</Text>
+          <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, marginBottom: 32, textAlign: 'center' }}>Preparing board game scoring...</Text>
+
           {showSkipLoading && (
             <Animated.View entering={FadeIn}>
               <TouchableOpacity
                 onPress={() => setScreen('start')}
-                className="px-6 py-2 bg-white/10 rounded-full border border-white/10"
+                style={{ paddingHorizontal: 24, paddingVertical: 8, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 999, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' }}
               >
-                <Text className="text-white/60 text-xs">Skip Loading</Text>
+                <Text style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>Skip Loading</Text>
               </TouchableOpacity>
             </Animated.View>
           )}
@@ -245,76 +256,129 @@ export default function App() {
         <Animated.View
           entering={FadeIn}
           exiting={FadeOut}
-          className="absolute inset-0 flex-col bg-black"
+          style={{ flex: 1 }}
         >
-          <View className="relative z-10 flex-1 flex-col">
-            <View className="flex-[0.6] items-center justify-center p-6">
-              <View className={`flex-row flex-wrap justify-center w-full max-w-xs mx-auto`}>
-                {selectedColors.map((color, i) => (
-                  <View key={i} className={`items-center w-1/3 p-2 ${playerCount > 6 ? 'gap-1' : 'gap-2'}`}>
-                    <TouchableOpacity 
-                      onPress={() => rotateColor(i)}
-                      activeOpacity={0.7}
-                    >
-                      <Meeple 
-                        color={color.hex} 
-                        size={playerCount > 6 ? 56 : 80} 
-                        className="shadow-2xl" 
-                      />
-                    </TouchableOpacity>
-                    {isCustomNamingEnabled && (
-                      <Animated.View entering={FadeIn} exiting={FadeOut} className="w-full px-1">
-                        <TextInput
-                          placeholder={color.name}
-                          placeholderTextColor="rgba(255,255,255,0.2)"
-                          value={customNames[i] || ''}
-                          onChangeText={(text) => setCustomNames(prev => ({ ...prev, [i]: text }))}
-                          className={`w-full bg-white/10 border border-white/10 rounded-lg px-1 ${playerCount > 6 ? 'py-0.5' : 'py-1'} text-[10px] text-center text-white`}
-                        />
-                      </Animated.View>
-                    )}
-                  </View>
-                ))}
-              </View>
-            </View>
+          <SafeAreaView style={{ flex: 1 }}>
+            <View style={{ flex: 1, paddingHorizontal: 20, paddingBottom: 20 }}>
 
-            <View className="flex-[0.4] items-center justify-between p-4 pb-10">
-              <View className={`items-center w-full ${windowHeight < 700 ? 'gap-3' : 'gap-6'}`}>
-                <View className={`flex-row items-center gap-3 bg-white/5 px-4 ${windowHeight < 700 ? 'py-1' : 'py-2'} rounded-full border border-white/10`}>
-                  <Text className="text-[10px] uppercase tracking-widest font-bold text-white/60">Custom Names</Text>
+              {/* Fixed Title Under Notch */}
+              <View style={{ position: 'absolute', top: 80, left: 0, right: 0, alignItems: 'center', zIndex: 10 }}>
+                <Text style={{
+                  color: '#FFF',
+                  fontSize: 48,
+                  fontWeight: '700',
+                  letterSpacing: 2,
+                  textShadowColor: 'rgba(0,0,0,0.8)',
+                  textShadowOffset: { width: 0, height: 4 },
+                  textShadowRadius: 8
+                }}>
+                  Carcassonne
+                </Text>
+              </View>
+
+              {/* Meeple Grid */}
+              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', width: '100%', marginTop: 60 }}>
+                  {selectedColors.map((color, i) => (
+                    <View key={i} style={{ width: '33.33%', alignItems: 'center', marginBottom: 24 }}>
+                      <TouchableOpacity
+                        onPress={() => rotateColor(i)}
+                        activeOpacity={0.7}
+                      >
+                        <Meeple
+                          color={color.hex}
+                          size={80}
+                          image={color.image}
+                        />
+                      </TouchableOpacity>
+                      {isCustomNamingEnabled && (
+                        <Animated.View entering={FadeIn} exiting={FadeOut} style={{ width: '100%', paddingHorizontal: 8, marginTop: 12 }}>
+                          <TextInput
+                            placeholder={color.name}
+                            placeholderTextColor="rgba(255,255,255,0.4)"
+                            value={customNames[i] || ''}
+                            onChangeText={(text) => setCustomNames(prev => ({ ...prev, [i]: text }))}
+                            style={{
+                              width: '100%',
+                              backgroundColor: 'rgba(255,255,255,0.2)',
+                              borderColor: 'rgba(255,255,255,0.3)',
+                              borderWidth: 1,
+                              borderRadius: 8,
+                              paddingVertical: 6,
+                              fontSize: 12,
+                              textAlign: 'center',
+                              color: '#FFF'
+                            }}
+                          />
+                        </Animated.View>
+                      )}
+                    </View>
+                  ))}
+                </View>
+              </View>
+
+              {/* Bottom 40% - Control Section */}
+              <View style={{ flex: 0.4, justifyContent: 'flex-end', alignItems: 'center', gap: 40 }}>
+
+                {/* Custom Names Toggle */}
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: 'rgba(255,255,255,0.1)', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' }}>
+                  <Text style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: 1, fontWeight: 'bold', color: 'rgba(255,255,255,0.6)' }}>Custom Names</Text>
                   <TouchableOpacity
                     onPress={() => setIsCustomNamingEnabled(!isCustomNamingEnabled)}
-                    className={`w-10 h-5 rounded-full justify-center ${isCustomNamingEnabled ? 'bg-emerald-500' : 'bg-white/10'}`}
+                    style={{
+                      width: 40,
+                      height: 20,
+                      borderRadius: 10,
+                      justifyContent: 'center',
+                      backgroundColor: isCustomNamingEnabled ? '#10B981' : 'rgba(255,255,255,0.2)'
+                    }}
                   >
                     <Animated.View
-                      className="w-3 h-3 bg-white rounded-full shadow-sm"
-                      style={{ transform: [{ translateX: isCustomNamingEnabled ? 22 : 2 }] }}
+                      style={{
+                        width: 14,
+                        height: 14,
+                        backgroundColor: '#FFF',
+                        borderRadius: 7,
+                        transform: [{ translateX: isCustomNamingEnabled ? 22 : 4 }]
+                      }}
                     />
                   </TouchableOpacity>
                 </View>
 
-                <View className={`items-center ${windowHeight < 700 ? 'gap-1' : 'gap-2'}`}>
-                  <View className={`flex-row items-center ${windowHeight < 700 ? 'gap-4' : 'gap-8'}`}>
-                    <TouchableOpacity onPress={() => setPlayerCount(Math.max(2, playerCount - 1))} className="p-2">
-                      <ChevronLeft color="rgba(255,255,255,0.5)" size={windowHeight < 700 ? 32 : 48} strokeWidth={3} />
+                {/* Player Number */}
+                <View style={{ alignItems: 'center' }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 30 }}>
+                    <TouchableOpacity onPress={() => setPlayerCount(Math.max(2, playerCount - 1))} style={{ padding: 10 }}>
+                      <ChevronLeft color="rgba(255,255,255,0.5)" size={48} strokeWidth={3} />
                     </TouchableOpacity>
-                    <Text className={`text-white ${windowHeight < 700 ? 'text-5xl' : 'text-8xl'} font-bold tracking-tighter`}>{playerCount}</Text>
-                    <TouchableOpacity onPress={() => setPlayerCount(Math.min(9, playerCount + 1))} className="p-2">
-                      <ChevronRight color="rgba(255,255,255,0.5)" size={windowHeight < 700 ? 32 : 48} strokeWidth={3} />
+                    <Text style={{ color: '#FFF', fontSize: 80, fontWeight: 'bold' }}>{playerCount}</Text>
+                    <TouchableOpacity onPress={() => setPlayerCount(Math.min(9, playerCount + 1))} style={{ padding: 10 }}>
+                      <ChevronRight color="rgba(255,255,255,0.5)" size={48} strokeWidth={3} />
                     </TouchableOpacity>
                   </View>
-                  <Text className="text-white/40 text-[10px] uppercase tracking-widest font-medium">Players</Text>
+                  <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, textTransform: 'uppercase', letterSpacing: 2, fontWeight: '600' }}>Players</Text>
                 </View>
-              </View>
 
-              <TouchableOpacity
-                onPress={handleStart}
-                className={`w-full ${windowHeight < 700 ? 'py-3' : 'py-5'} bg-white/10 border border-white/20 rounded-2xl items-center justify-center shadow-lg`}
-              >
-                <Text className="text-white font-bold uppercase tracking-widest text-lg">Start</Text>
-              </TouchableOpacity>
+                {/* Start Button */}
+                <TouchableOpacity
+                  onPress={handleStart}
+                  style={{
+                    width: '100%',
+                    height: 60,
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    borderRadius: 16,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderWidth: 1,
+                    borderColor: 'rgba(255,255,255,0.2)'
+                  }}
+                >
+                  <Text style={{ color: '#FFF', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 2, fontSize: 18 }}>Start</Text>
+                </TouchableOpacity>
+
+              </View>
             </View>
-          </View>
+          </SafeAreaView>
         </Animated.View>
       )}
 
@@ -322,80 +386,109 @@ export default function App() {
         <Animated.View
           entering={SlideInRight}
           exiting={SlideOutRight}
-          className="absolute inset-0 flex-col bg-neutral-900 pt-10"
+          style={{ flex: 1 }}
         >
-          <View className={`flex-row justify-between items-center px-4 pb-2 ${players.length > 6 ? 'pt-2' : ''}`}>
-            <TouchableOpacity onPress={() => setScreen('start')} className="p-2">
-              <ArrowLeft color="rgba(255,255,255,0.8)" size={players.length > 6 ? 24 : 28} />
-            </TouchableOpacity>
-            <View className="flex-row items-center gap-2">
-              <TouchableOpacity onPress={() => setScreen('history')} className="p-2">
-                <History color="rgba(255,255,255,0.8)" size={players.length > 6 ? 24 : 28} />
+          <SafeAreaView style={{ flex: 1 }}>
+            {/* Header */}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 8, paddingTop: players.length > 6 ? 16 : 32 }}>
+              <TouchableOpacity onPress={() => setScreen('start')} style={{ padding: 8 }}>
+                <ArrowLeft color="rgba(255,255,255,0.8)" size={players.length > 6 ? 24 : 28} />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setShowResetModal(true)} className="p-2">
-                <RotateCcw color="rgba(255,255,255,0.8)" size={players.length > 6 ? 24 : 28} />
-              </TouchableOpacity>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <TouchableOpacity onPress={() => setScreen('history')} style={{ padding: 8 }}>
+                  <History color="rgba(255,255,255,0.8)" size={players.length > 6 ? 24 : 28} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setShowResetModal(true)} style={{ padding: 8 }}>
+                  <RotateCcw color="rgba(255,255,255,0.8)" size={players.length > 6 ? 24 : 28} />
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
 
-          <View className={`flex-1 px-6 pb-4 ${scale.gap}`}>
-            {players.map((player) => (
-              <View key={player.id} className="flex-1 bg-neutral-800/80 rounded-2xl overflow-hidden shadow-xl border border-white/5">
-                <View className={`${scale.rowP} flex-row items-center justify-between flex-1`}>
-                  <View className="flex-row items-center gap-4">
-                    <View className="relative">
-                      <Meeple color={player.color} size={scale.meeple} className="shadow-md" />
-                      {tempScores[player.id] !== undefined && (
-                        <Animated.View entering={FadeIn} exiting={FadeOut} className="absolute inset-0 items-center justify-center">
-                          <Text className="text-white font-black text-xl shadow-lg shadow-black">
-                            {tempScores[player.id] > 0 ? `+${tempScores[player.id]}` : tempScores[player.id]}
+            {/* List of Player Cards */}
+            <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 24 }}>
+              {players.map((player) => {
+                const isDense = players.length > 6;
+                const cardPadding = isDense ? 12 : 16;
+                const meepleSize = isDense ? 44 : 56;
+                const scoreFontSize = isDense ? 48 : 64;
+                const buttonPadding = isDense ? 10 : 16;
+
+                return (
+                  <View key={player.id} style={{
+                    backgroundColor: '#1E1E1E',
+                    borderRadius: 16,
+                    marginVertical: isDense ? 4 : 8,
+                    marginHorizontal: 16,
+                    overflow: 'hidden',
+                    elevation: 5,
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 4
+                  }}>
+                    {/* Top Row (Info) */}
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: cardPadding }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                        <View style={{ position: 'relative' }}>
+                          <Meeple color={player.color} size={meepleSize} image={player.image} />
+                          {tempScores[player.id] !== undefined && (
+                            <Animated.View entering={FadeIn} exiting={FadeOut} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
+                              <Text style={{ color: '#FFF', fontWeight: '900', fontSize: 24, textShadowColor: '#000', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 4 }}>
+                                {tempScores[player.id] > 0 ? `+${tempScores[player.id]}` : tempScores[player.id]}
+                              </Text>
+                            </Animated.View>
+                          )}
+                        </View>
+                        {isCustomNamingEnabled && (
+                          <Text style={{ color: 'rgba(255,255,255,0.8)', fontSize: 16, fontWeight: 'bold' }} numberOfLines={1}>
+                            {player.name}
                           </Text>
-                        </Animated.View>
-                      )}
+                        )}
+                      </View>
+                      <Text style={{ color: player.color, fontSize: scoreFontSize, fontWeight: 'bold', letterSpacing: -2 }}>
+                        {player.score}
+                      </Text>
                     </View>
-                    {isCustomNamingEnabled && (
-                      <Text className="text-sm font-bold text-white/80" numberOfLines={1}>{player.name}</Text>
-                    )}
-                  </View>
-                  <Text className={`${scale.score} font-bold tracking-tighter`} style={{ color: player.color }}>
-                    {player.score}
-                  </Text>
-                </View>
-                <View className="flex-row border-t border-white/5" style={{ backgroundColor: `${player.color}33` }}>
-                  {[
-                    { label: '-1', val: -1 },
-                    { label: '-10', val: -10 },
-                    { label: '+1', val: 1 },
-                    { label: '+10', val: 10 },
-                  ].map((btn) => (
-                    <TouchableOpacity
-                      key={btn.label}
-                      onPress={() => updateScore(player.id, btn.val)}
-                      className={`flex-1 items-center justify-center ${scale.btnPy}`}
-                    >
-                      <Text className={`${scale.btnText} font-bold`} style={{ color: player.color }}>{btn.label}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
-            ))}
-          </View>
 
-          {showResetModal && (
-            <Animated.View entering={FadeIn} exiting={FadeOut} className="absolute inset-0 z-50 items-center justify-center p-6 bg-black/80">
-              <View className="bg-neutral-800 p-8 rounded-3xl w-full max-w-xs items-center border border-white/10">
-                <Text className="text-white text-2xl font-bold mb-6">Reset all scores?</Text>
-                <View className="w-full gap-3">
-                  <TouchableOpacity onPress={resetScores} className="w-full py-4 bg-red-600 rounded-xl items-center mb-3">
-                    <Text className="text-white font-bold text-lg">Yes, Reset</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => setShowResetModal(false)} className="w-full py-4 bg-white/10 rounded-xl items-center">
-                    <Text className="text-white font-bold text-lg">Cancel</Text>
-                  </TouchableOpacity>
+                    {/* Bottom Row (Buttons) */}
+                    <View style={{ flexDirection: 'row', backgroundColor: 'rgba(0,0,0,0.2)', borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.05)' }}>
+                      {[
+                        { label: '-1', val: -1 },
+                        { label: '-10', val: -10 },
+                        { label: '+1', val: 1 },
+                        { label: '+10', val: 10 },
+                      ].map((btn) => (
+                        <TouchableOpacity
+                          key={btn.label}
+                          onPress={() => updateScore(player.id, btn.val)}
+                          style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: buttonPadding, minHeight: 44 }}
+                        >
+                          <Text style={{ color: player.color, fontSize: isDense ? 16 : 20, fontWeight: 'bold' }}>{btn.label}</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  </View>
+                );
+              })}
+            </ScrollView>
+
+            {/* Reset Modal */}
+            {showResetModal && (
+              <Animated.View entering={FadeIn} exiting={FadeOut} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 50, alignItems: 'center', justifyContent: 'center', padding: 24, backgroundColor: 'rgba(0,0,0,0.8)' }}>
+                <View style={{ backgroundColor: '#262626', padding: 32, borderRadius: 24, width: '100%', maxWidth: 320, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }}>
+                  <Text style={{ color: '#FFF', fontSize: 24, fontWeight: 'bold', marginBottom: 24 }}>Reset all scores?</Text>
+                  <View style={{ width: '100%', gap: 12 }}>
+                    <TouchableOpacity onPress={resetScores} style={{ width: '100%', paddingVertical: 16, backgroundColor: '#DC2626', borderRadius: 12, alignItems: 'center', marginBottom: 12 }}>
+                      <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 18 }}>Yes, Reset</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setShowResetModal(false)} style={{ width: '100%', paddingVertical: 16, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 12, alignItems: 'center' }}>
+                      <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 18 }}>Cancel</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-            </Animated.View>
-          )}
+              </Animated.View>
+            )}
+          </SafeAreaView>
         </Animated.View>
       )}
 
@@ -403,53 +496,69 @@ export default function App() {
         <Animated.View
           entering={SlideInRight}
           exiting={SlideOutRight}
-          className="absolute inset-0 flex-col bg-neutral-900 pt-10"
+          style={{ flex: 1 }}
         >
-          <View className="flex-row items-center justify-between p-4 border-b border-white/5">
-            <TouchableOpacity onPress={() => setScreen('scoring')} className="p-2">
-              <ArrowLeft color="rgba(255,255,255,0.8)" size={28} />
-            </TouchableOpacity>
-            <Text className="text-white text-xl font-bold tracking-tight">Score History</Text>
-            <View className="w-10" />
-          </View>
+          {/* Dimmer overlay just for history */}
+          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.7)' }} />
 
-          <ScrollView className="flex-1">
+          <SafeAreaView style={{ flex: 1 }}>
+            {/* Header */}
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 48, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.1)' }}>
+              <TouchableOpacity onPress={() => setScreen('scoring')} style={{ padding: 8 }}>
+                <ArrowLeft color="rgba(255,255,255,0.8)" size={28} />
+              </TouchableOpacity>
+              <Text style={{ color: '#FFF', fontSize: 20, fontWeight: 'bold' }}>Score History</Text>
+              <View style={{ width: 44 }} />
+            </View>
+
+            {/* List */}
             {history.length === 0 ? (
-              <View className="flex-1 items-center justify-center p-8 mt-20 gap-4">
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 }}>
                 <History color="rgba(255,255,255,0.3)" size={64} strokeWidth={1} />
-                <Text className="text-white/30 text-lg font-medium">No scores recorded yet</Text>
+                <Text style={{ color: 'rgba(255,255,255,0.3)', fontSize: 18, fontWeight: '500' }}>No scores recorded yet</Text>
               </View>
             ) : (
-              <View className="pb-8">
-                {history.map((entry) => (
-                  <View key={entry.id} className="flex-row items-center justify-between py-3 px-4 border-b border-white/5">
-                    <View className="flex-row items-center gap-4">
-                      <Text className="text-[10px] text-white/30 w-10">
+              <FlatList
+                data={history}
+                keyExtractor={(item) => item.id}
+                contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
+                renderItem={({ item: entry }) => (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 0.5, borderBottomColor: 'rgba(255,255,255,0.15)' }}>
+
+                    {/* Col 1 + Col 2 (Left Side) */}
+                    <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, gap: 12 }}>
+                      <Text style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', width: 40 }}>
                         {new Date(entry.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </Text>
-                      <Meeple color={entry.playerColor} size={24} />
-                      {isCustomNamingEnabled && (
-                        <Text className="text-[10px] font-bold text-white/60">
-                          {players.find(p => p.id === entry.playerId)?.name}
-                        </Text>
-                      )}
+
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 }}>
+                        <Meeple color={entry.playerColor} size={20} image={entry.playerImage} />
+                        {isCustomNamingEnabled && (
+                          <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'rgba(255,255,255,0.8)' }} numberOfLines={1}>
+                            {players.find(p => p.id === entry.playerId)?.name}
+                          </Text>
+                        )}
+                      </View>
                     </View>
-                    
-                    <View className="flex-row items-center gap-3">
-                      <Text className="text-xs text-white/40 font-medium">
-                        ({entry.value > 0 ? `+${entry.value}` : entry.value})
+
+                    {/* Col 3 + Col 4 (Right Side) */}
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                      <Text style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', fontWeight: '600', width: 36, textAlign: 'right' }}>
+                        {entry.value > 0 ? `+${entry.value}` : entry.value}
                       </Text>
-                      <Text className="text-xl font-bold text-white min-w-[2.5rem] text-right">
+
+                      <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#FFF', minWidth: 40, textAlign: 'right' }}>
                         {entry.cumulativeScore}
                       </Text>
                     </View>
+
                   </View>
-                ))}
-              </View>
+                )}
+              />
             )}
-          </ScrollView>
+          </SafeAreaView>
         </Animated.View>
       )}
-    </View>
+    </ImageBackground>
   );
 }

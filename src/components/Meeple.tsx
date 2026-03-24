@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Image } from 'react-native';
+import { View } from 'react-native';
+import { Image } from 'expo-image';
 import Svg, { Path } from 'react-native-svg';
 
 interface MeepleProps {
@@ -18,7 +19,8 @@ export const Meeple: React.FC<MeepleProps> = ({ color, size = 48, className = ""
       >
         <Image 
           source={image} 
-          style={{ width: '100%', height: '100%', resizeMode: 'contain' }}
+          style={{ width: '100%', height: '100%' }}
+          contentFit="contain"
         />
       </View>
     );
