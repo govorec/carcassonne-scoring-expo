@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, TouchableOpacity, useWindowDimensions, TextInput, ScrollView, Animated as RNAnimated, Easing, ImageBackground, FlatList, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
@@ -40,6 +41,7 @@ const COLORS = [
   { name: 'Orange', hex: '#F97316', image: require('../assets/Meeple_orange_Vectorizer-AI.svg') },
   { name: 'Brown', hex: '#78350F', image: require('../assets/Meeple_brown_Vectorizer-AI.svg') },
 ];
+const STORAGE_KEY = '@carcassonne_game_state';
 
 export default function App() {
   useKeepAwake();
@@ -87,22 +89,69 @@ export default function App() {
   }, [tempScores]);
 
   useEffect(() => {
-    console.log('App initializing...');
-    const timer = setTimeout(() => {
-      setScreen('start');
+    const initialize = async () => {
+      console.log('App initializing...');
+      try {
+        const saved = await AsyncStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const data = JSON.parse(saved);
+          if (data.playerCount) setPlayerCount(data.playerCount);
+          if (data.isCustomNamingEnabled !== undefined) setIsCustomNamingEnabled(data.isCustomNamingEnabled);
+          if (data.customNames) setCustomNames(data.customNames);
+          if (data.players) setPlayers(data.players);
+          if (data.history) setHistory(data.history);
+          if (data.selectedColors) setSelectedColors(data.selectedColors);
+          if (data.screen && data.screen !== 'loading') {
+            setScreen(data.screen);
+            console.log('Restored screen:', data.screen);
+          } else {
+            setScreen('start');
+          }
+        } else {
+          setScreen('start');
+        }
+      } catch (e) {
+        console.error('Failed to load state:', e);
+        setScreen('start');
+      }
       console.log('App ready');
-    }, 1200);
+    };
+
+    initialize();
 
     const skipTimer = setTimeout(() => {
       setShowSkipLoading(true);
     }, 5000);
 
     return () => {
-      clearTimeout(timer);
       clearTimeout(skipTimer);
       Object.values(timeouts.current).forEach(clearTimeout);
     };
   }, []);
+
+  // Save State Effect
+  useEffect(() => {
+    if (screen === 'loading') return;
+
+    const saveState = async () => {
+      try {
+        const state = {
+          screen,
+          playerCount,
+          selectedColors,
+          isCustomNamingEnabled,
+          customNames,
+          players,
+          history
+        };
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        console.error('Failed to save state:', e);
+      }
+    };
+
+    saveState();
+  }, [screen, playerCount, selectedColors, isCustomNamingEnabled, customNames, players, history]);
 
   useEffect(() => {
     if (selectedColors.length < playerCount) {
@@ -189,13 +238,18 @@ export default function App() {
     }, 5000);
   };
 
-  const resetScores = () => {
+  const resetScores = async () => {
     setPlayers(prev => prev.map(p => ({ ...p, score: 0 })));
     setTempScores({});
     setHistory([]);
     Object.values(timeouts.current).forEach(clearTimeout);
     timeouts.current = {};
     setShowResetModal(false);
+    try {
+      await AsyncStorage.removeItem(STORAGE_KEY);
+    } catch (e) {
+      console.error('Failed to clear state:', e);
+    }
   };
 
   const scale = useMemo(() => {
