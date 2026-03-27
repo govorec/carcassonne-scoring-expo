@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, TouchableOpacity, useWindowDimensions, TextInput, ScrollView, Animated as RNAnimated, Easing, ImageBackground, FlatList, Keyboard, TouchableWithoutFeedback, Share } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { Meeple } from './components/Meeple';
 import { Settings, ArrowLeft, RotateCcw, ChevronLeft, ChevronRight, Loader2, History, Share2 } from 'lucide-react-native';
@@ -58,7 +58,7 @@ const getMeepleEmoji = (hex: string) => {
   }
 };
 
-export default function App() {
+function MainApp() {
   useKeepAwake();
   const insets = useSafeAreaInsets();
   const [screen, setScreen] = useState<Screen>('loading');
@@ -371,8 +371,8 @@ export default function App() {
           style={{ flex: 1 }}
         >
           <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-            <SafeAreaView style={{ flex: 1 }}>
-              <View style={{ flex: 1, paddingHorizontal: 20, paddingBottom: 20 }}>
+            <View style={{ flex: 1 }}>
+              <View style={{ flex: 1, paddingHorizontal: 20, paddingBottom: 20, paddingTop: insets.top }}>
 
                 {/* Fixed Title Under Notch */}
                 <View style={{ position: 'absolute', top: 80, left: 0, right: 0, alignItems: 'center', zIndex: 10 }}>
@@ -491,7 +491,7 @@ export default function App() {
 
                 </View>
               </View>
-            </SafeAreaView>
+            </View>
           </TouchableWithoutFeedback>
         </Animated.View>
       )}
@@ -559,7 +559,17 @@ export default function App() {
                           </Text>
                         )}
                       </View>
-                      <Text style={{ color: player.color, fontSize: scoreFontSize, fontWeight: 'bold', letterSpacing: -2 }}>
+                      <Text style={{ 
+                        color: player.color, 
+                        fontSize: scoreFontSize, 
+                        fontWeight: 'bold', 
+                        letterSpacing: -2,
+                        ...(player.color === '#1A1A1A' ? {
+                          textShadowColor: 'rgba(255,255,255,0.8)',
+                          textShadowOffset: { width: 0, height: 0 },
+                          textShadowRadius: 2
+                        } : {})
+                      }}>
                         {player.score}
                       </Text>
                     </View>
@@ -577,7 +587,16 @@ export default function App() {
                           onPress={() => updateScore(player.id, btn.val)}
                           style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: buttonPadding, minHeight: 44 }}
                         >
-                          <Text style={{ color: player.color, fontSize: isDense ? 16 : 20, fontWeight: 'bold' }}>{btn.label}</Text>
+                          <Text style={{ 
+                            color: player.color, 
+                            fontSize: isDense ? 16 : 20, 
+                            fontWeight: 'bold',
+                            ...(player.color === '#1A1A1A' ? {
+                              textShadowColor: 'rgba(255,255,255,0.8)',
+                              textShadowOffset: { width: 0, height: 0 },
+                              textShadowRadius: 2
+                            } : {})
+                          }}>{btn.label}</Text>
                         </TouchableOpacity>
                       ))}
                     </View>
@@ -676,5 +695,13 @@ export default function App() {
         </Animated.View>
       )}
     </ImageBackground>
+  );
+}
+
+export default function App() {
+  return (
+    <SafeAreaProvider>
+      <MainApp />
+    </SafeAreaProvider>
   );
 }
