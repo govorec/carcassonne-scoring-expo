@@ -31,15 +31,15 @@ interface HistoryEntry {
 }
 
 const COLORS = [
-  { name: 'Red', hex: '#B23B2B', image: require('../assets/Meeple_red_Vectorizer-AI.svg') },
-  { name: 'Green', hex: '#2EB84B', image: require('../assets/Meeple_green_Vectorizer-AI.svg') },
-  { name: 'Blue', hex: '#1E40AF', image: require('../assets/Meeple_blue_Vectorizer-AI.svg') },
-  { name: 'Black', hex: '#1A1A1A', image: require('../assets/Meeple_black_Vectorizer-AI.svg') },
-  { name: 'Yellow', hex: '#FACC15', image: require('../assets/Meeple_yellow_Vectorizer-AI.svg') },
-  { name: 'Gray', hex: '#6B7280', image: require('../assets/Meeple_gray_Vectorizer-AI.svg') },
-  { name: 'Pink', hex: '#E678A7', image: require('../assets/Meeple_pink_Vectorizer-AI.svg') },
-  { name: 'Orange', hex: '#F97316', image: require('../assets/Meeple_orange_Vectorizer-AI.svg') },
-  { name: 'Brown', hex: '#78350F', image: require('../assets/Meeple_brown_Vectorizer-AI.svg') },
+  { name: 'Red', hex: '#B23B2B', image: require('../assets/Meeple_red.svg') },
+  { name: 'Green', hex: '#2EB84B', image: require('../assets/Meeple_green.svg') },
+  { name: 'Blue', hex: '#1E40AF', image: require('../assets/Meeple_blue.svg') },
+  { name: 'Black', hex: '#1A1A1A', image: require('../assets/Meeple_black.svg') },
+  { name: 'Yellow', hex: '#FACC15', image: require('../assets/Meeple_yellow.svg') },
+  { name: 'Gray', hex: '#6B7280', image: require('../assets/Meeple_gray.svg') },
+  { name: 'Pink', hex: '#E678A7', image: require('../assets/Meeple_pink.svg') },
+  { name: 'Orange', hex: '#F97316', image: require('../assets/Meeple_orange.svg') },
+  { name: 'Brown', hex: '#78350F', image: require('../assets/Meeple_brown.svg') },
 ];
 const STORAGE_KEY = '@carcassonne_game_state';
 
@@ -360,7 +360,7 @@ function MainApp() {
 
   return (
     <ImageBackground
-      source={require('../assets/Gemini_bg.png')}
+      source={require('../assets/bg.jpg')}
       style={{ flex: 1 }}
       resizeMode="cover"
     >
