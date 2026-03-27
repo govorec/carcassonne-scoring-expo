@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { View, Text, TouchableOpacity, useWindowDimensions, TextInput, ScrollView, Animated as RNAnimated, Easing, ImageBackground, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, useWindowDimensions, TextInput, ScrollView, Animated as RNAnimated, Easing, ImageBackground, FlatList, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { Meeple } from './components/Meeple';
 import { Settings, ArrowLeft, RotateCcw, ChevronLeft, ChevronRight, Loader2, History } from 'lucide-react-native';
+import { useKeepAwake } from 'expo-keep-awake';
+import * as Haptics from 'expo-haptics';
 import Animated, { FadeIn, FadeOut, SlideInRight, SlideOutRight } from 'react-native-reanimated';
 import '../global.css';
 
@@ -40,6 +42,7 @@ const COLORS = [
 ];
 
 export default function App() {
+  useKeepAwake();
   const [screen, setScreen] = useState<Screen>('loading');
   const [playerCount, setPlayerCount] = useState(6);
   const [selectedColors, setSelectedColors] = useState(COLORS.slice(0, 6));
@@ -141,12 +144,14 @@ export default function App() {
     }));
     setPlayers(initialPlayers);
     setScreen('scoring');
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   };
 
   const updateScore = (id: number, delta: number) => {
     setPlayers(prev => prev.map(p =>
       p.id === id ? { ...p, score: Math.max(0, p.score + delta) } : p
     ));
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
     setTempScores(prev => ({
       ...prev,
@@ -258,127 +263,129 @@ export default function App() {
           exiting={FadeOut}
           style={{ flex: 1 }}
         >
-          <SafeAreaView style={{ flex: 1 }}>
-            <View style={{ flex: 1, paddingHorizontal: 20, paddingBottom: 20 }}>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <SafeAreaView style={{ flex: 1 }}>
+              <View style={{ flex: 1, paddingHorizontal: 20, paddingBottom: 20 }}>
 
-              {/* Fixed Title Under Notch */}
-              <View style={{ position: 'absolute', top: 80, left: 0, right: 0, alignItems: 'center', zIndex: 10 }}>
-                <Text style={{
-                  color: '#FFF',
-                  fontSize: 48,
-                  fontWeight: '700',
-                  letterSpacing: 2,
-                  textShadowColor: 'rgba(0,0,0,0.8)',
-                  textShadowOffset: { width: 0, height: 4 },
-                  textShadowRadius: 8
-                }}>
-                  Carcassonne
-                </Text>
-              </View>
+                {/* Fixed Title Under Notch */}
+                <View style={{ position: 'absolute', top: 80, left: 0, right: 0, alignItems: 'center', zIndex: 10 }}>
+                  <Text style={{
+                    color: '#FFF',
+                    fontSize: 48,
+                    fontWeight: '700',
+                    letterSpacing: 2,
+                    textShadowColor: 'rgba(0,0,0,0.8)',
+                    textShadowOffset: { width: 0, height: 4 },
+                    textShadowRadius: 8
+                  }}>
+                    Carcassonne
+                  </Text>
+                </View>
 
-              {/* Meeple Grid */}
-              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', width: '100%', marginTop: 60 }}>
-                  {selectedColors.map((color, i) => (
-                    <View key={i} style={{ width: '33.33%', alignItems: 'center', marginBottom: 24 }}>
-                      <TouchableOpacity
-                        onPress={() => rotateColor(i)}
-                        activeOpacity={0.7}
-                      >
-                        <Meeple
-                          color={color.hex}
-                          size={80}
-                          image={color.image}
-                        />
-                      </TouchableOpacity>
-                      {isCustomNamingEnabled && (
-                        <Animated.View entering={FadeIn} exiting={FadeOut} style={{ width: '100%', paddingHorizontal: 8, marginTop: 12 }}>
-                          <TextInput
-                            placeholder={color.name}
-                            placeholderTextColor="rgba(255,255,255,0.4)"
-                            value={customNames[i] || ''}
-                            onChangeText={(text) => setCustomNames(prev => ({ ...prev, [i]: text }))}
-                            style={{
-                              width: '100%',
-                              backgroundColor: 'rgba(255,255,255,0.2)',
-                              borderColor: 'rgba(255,255,255,0.3)',
-                              borderWidth: 1,
-                              borderRadius: 8,
-                              paddingVertical: 6,
-                              fontSize: 12,
-                              textAlign: 'center',
-                              color: '#FFF'
-                            }}
+                {/* Meeple Grid */}
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', width: '100%', marginTop: 60 }}>
+                    {selectedColors.map((color, i) => (
+                      <View key={i} style={{ width: '33.33%', alignItems: 'center', marginBottom: 24 }}>
+                        <TouchableOpacity
+                          onPress={() => rotateColor(i)}
+                          activeOpacity={0.7}
+                        >
+                          <Meeple
+                            color={color.hex}
+                            size={80}
+                            image={color.image}
                           />
-                        </Animated.View>
-                      )}
-                    </View>
-                  ))}
+                        </TouchableOpacity>
+                        {isCustomNamingEnabled && (
+                          <Animated.View entering={FadeIn} exiting={FadeOut} style={{ width: '100%', paddingHorizontal: 8, marginTop: 12 }}>
+                            <TextInput
+                              placeholder={color.name}
+                              placeholderTextColor="rgba(255,255,255,0.4)"
+                              value={customNames[i] || ''}
+                              onChangeText={(text) => setCustomNames(prev => ({ ...prev, [i]: text }))}
+                              style={{
+                                width: '100%',
+                                backgroundColor: 'rgba(255,255,255,0.2)',
+                                borderColor: 'rgba(255,255,255,0.3)',
+                                borderWidth: 1,
+                                borderRadius: 8,
+                                paddingVertical: 6,
+                                fontSize: 12,
+                                textAlign: 'center',
+                                color: '#FFF'
+                              }}
+                            />
+                          </Animated.View>
+                        )}
+                      </View>
+                    ))}
+                  </View>
                 </View>
-              </View>
 
-              {/* Bottom 40% - Control Section */}
-              <View style={{ flex: 0.4, justifyContent: 'flex-end', alignItems: 'center', gap: 40 }}>
+                {/* Bottom 40% - Control Section */}
+                <View style={{ flex: 0.4, justifyContent: 'flex-end', alignItems: 'center', gap: 40 }}>
 
-                {/* Custom Names Toggle */}
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: 'rgba(255,255,255,0.1)', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' }}>
-                  <Text style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: 1, fontWeight: 'bold', color: 'rgba(255,255,255,0.6)' }}>Custom Names</Text>
-                  <TouchableOpacity
-                    onPress={() => setIsCustomNamingEnabled(!isCustomNamingEnabled)}
-                    style={{
-                      width: 40,
-                      height: 20,
-                      borderRadius: 10,
-                      justifyContent: 'center',
-                      backgroundColor: isCustomNamingEnabled ? '#10B981' : 'rgba(255,255,255,0.2)'
-                    }}
-                  >
-                    <Animated.View
+                  {/* Custom Names Toggle */}
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: 'rgba(255,255,255,0.1)', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' }}>
+                    <Text style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: 1, fontWeight: 'bold', color: 'rgba(255,255,255,0.6)' }}>Custom Names</Text>
+                    <TouchableOpacity
+                      onPress={() => setIsCustomNamingEnabled(!isCustomNamingEnabled)}
                       style={{
-                        width: 14,
-                        height: 14,
-                        backgroundColor: '#FFF',
-                        borderRadius: 7,
-                        transform: [{ translateX: isCustomNamingEnabled ? 22 : 4 }]
+                        width: 40,
+                        height: 20,
+                        borderRadius: 10,
+                        justifyContent: 'center',
+                        backgroundColor: isCustomNamingEnabled ? '#10B981' : 'rgba(255,255,255,0.2)'
                       }}
-                    />
-                  </TouchableOpacity>
-                </View>
-
-                {/* Player Number */}
-                <View style={{ alignItems: 'center' }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 30 }}>
-                    <TouchableOpacity onPress={() => setPlayerCount(Math.max(2, playerCount - 1))} style={{ padding: 10 }}>
-                      <ChevronLeft color="rgba(255,255,255,0.5)" size={48} strokeWidth={3} />
-                    </TouchableOpacity>
-                    <Text style={{ color: '#FFF', fontSize: 80, fontWeight: 'bold' }}>{playerCount}</Text>
-                    <TouchableOpacity onPress={() => setPlayerCount(Math.min(9, playerCount + 1))} style={{ padding: 10 }}>
-                      <ChevronRight color="rgba(255,255,255,0.5)" size={48} strokeWidth={3} />
+                    >
+                      <Animated.View
+                        style={{
+                          width: 14,
+                          height: 14,
+                          backgroundColor: '#FFF',
+                          borderRadius: 7,
+                          transform: [{ translateX: isCustomNamingEnabled ? 22 : 4 }]
+                        }}
+                      />
                     </TouchableOpacity>
                   </View>
-                  <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, textTransform: 'uppercase', letterSpacing: 2, fontWeight: '600' }}>Players</Text>
+
+                  {/* Player Number */}
+                  <View style={{ alignItems: 'center' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 30 }}>
+                      <TouchableOpacity onPress={() => setPlayerCount(Math.max(2, playerCount - 1))} style={{ padding: 10 }}>
+                        <ChevronLeft color="rgba(255,255,255,0.5)" size={48} strokeWidth={3} />
+                      </TouchableOpacity>
+                      <Text style={{ color: '#FFF', fontSize: 80, fontWeight: 'bold' }}>{playerCount}</Text>
+                      <TouchableOpacity onPress={() => setPlayerCount(Math.min(9, playerCount + 1))} style={{ padding: 10 }}>
+                        <ChevronRight color="rgba(255,255,255,0.5)" size={48} strokeWidth={3} />
+                      </TouchableOpacity>
+                    </View>
+                    <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, textTransform: 'uppercase', letterSpacing: 2, fontWeight: '600' }}>Players</Text>
+                  </View>
+
+                  {/* Start Button */}
+                  <TouchableOpacity
+                    onPress={handleStart}
+                    style={{
+                      width: '100%',
+                      height: 60,
+                      backgroundColor: 'rgba(0,0,0,0.5)',
+                      borderRadius: 16,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 1,
+                      borderColor: 'rgba(255,255,255,0.2)'
+                    }}
+                  >
+                    <Text style={{ color: '#FFF', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 2, fontSize: 18 }}>Start</Text>
+                  </TouchableOpacity>
+
                 </View>
-
-                {/* Start Button */}
-                <TouchableOpacity
-                  onPress={handleStart}
-                  style={{
-                    width: '100%',
-                    height: 60,
-                    backgroundColor: 'rgba(0,0,0,0.5)',
-                    borderRadius: 16,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderWidth: 1,
-                    borderColor: 'rgba(255,255,255,0.2)'
-                  }}
-                >
-                  <Text style={{ color: '#FFF', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 2, fontSize: 18 }}>Start</Text>
-                </TouchableOpacity>
-
               </View>
-            </View>
-          </SafeAreaView>
+            </SafeAreaView>
+          </TouchableWithoutFeedback>
         </Animated.View>
       )}
 
@@ -503,7 +510,7 @@ export default function App() {
 
           <SafeAreaView style={{ flex: 1 }}>
             {/* Header */}
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 48, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.1)' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 20, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.1)' }}>
               <TouchableOpacity onPress={() => setScreen('scoring')} style={{ padding: 8 }}>
                 <ArrowLeft color="rgba(255,255,255,0.8)" size={28} />
               </TouchableOpacity>
@@ -513,7 +520,7 @@ export default function App() {
 
             {/* List */}
             {history.length === 0 ? (
-              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                 <History color="rgba(255,255,255,0.3)" size={64} strokeWidth={1} />
                 <Text style={{ color: 'rgba(255,255,255,0.3)', fontSize: 18, fontWeight: '500' }}>No scores recorded yet</Text>
               </View>
