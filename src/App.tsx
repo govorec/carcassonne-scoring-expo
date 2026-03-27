@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity, useWindowDimensions, TextInput, ScrollVie
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { Meeple } from './components/Meeple';
-import { Settings, ArrowLeft, RotateCcw, ChevronLeft, ChevronRight, Loader2, History, Share2, ScrollText } from 'lucide-react-native';
+import { Settings, ArrowLeft, RotateCcw, ChevronLeft, ChevronRight, Loader2, History, Share2, ScrollText, Redo } from 'lucide-react-native';
 import { useKeepAwake } from 'expo-keep-awake';
 import * as Haptics from 'expo-haptics';
 import Animated, { FadeIn, FadeOut, SlideInRight, SlideOutRight } from 'react-native-reanimated';
@@ -208,6 +208,8 @@ function MainApp() {
       name: isCustomNamingEnabled ? (customNames[index] || color.name) : color.name,
     }));
     setPlayers(initialPlayers);
+    setHistory([]);
+    setTempScores({});
     setScreen('scoring');
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   };
@@ -472,22 +474,45 @@ function MainApp() {
                     <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, textTransform: 'uppercase', letterSpacing: 2, fontWeight: '600' }}>Players</Text>
                   </View>
 
-                  {/* Start Button */}
-                  <TouchableOpacity
-                    onPress={handleStart}
-                    style={{
-                      width: '100%',
-                      height: 60,
-                      backgroundColor: 'rgba(0,0,0,0.5)',
-                      borderRadius: 16,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderWidth: 1,
-                      borderColor: 'rgba(255,255,255,0.2)'
-                    }}
-                  >
-                    <Text style={{ color: '#FFF', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 2, fontSize: 18 }}>Start</Text>
-                  </TouchableOpacity>
+                  {/* Start Button Section */}
+                  <View style={{ width: '100%', flexDirection: 'row', gap: 12 }}>
+                    <TouchableOpacity
+                      onPress={handleStart}
+                      style={{
+                        flex: 1,
+                        height: 60,
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        borderRadius: 16,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderWidth: 1,
+                        borderColor: 'rgba(255,255,255,0.2)'
+                      }}
+                    >
+                      <Text style={{ color: '#FFF', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 2, fontSize: 18 }}>Start</Text>
+                    </TouchableOpacity>
+
+                    {players.length > 0 && (
+                      <TouchableOpacity
+                        onPress={() => setScreen('scoring')}
+                        style={{
+                          width: 60,
+                          height: 60,
+                          backgroundColor: '#10B981', // Matching Active Toggle Green
+                          borderRadius: 16,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          elevation: 10,
+                          shadowColor: '#000',
+                          shadowOffset: { width: 0, height: 4 },
+                          shadowOpacity: 0.3,
+                          shadowRadius: 4
+                        }}
+                      >
+                        <Redo color="#FFF" size={28} />
+                      </TouchableOpacity>
+                    )}
+                  </View>
 
                 </View>
               </View>
