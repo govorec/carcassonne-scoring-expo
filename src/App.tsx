@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity, useWindowDimensions, TextInput, ScrollVie
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { Meeple } from './components/Meeple';
-import { Settings, ArrowLeft, RotateCcw, ChevronLeft, ChevronRight, Loader2, History, Share2 } from 'lucide-react-native';
+import { Settings, ArrowLeft, RotateCcw, ChevronLeft, ChevronRight, Loader2, History, Share2, ScrollText } from 'lucide-react-native';
 import { useKeepAwake } from 'expo-keep-awake';
 import * as Haptics from 'expo-haptics';
 import Animated, { FadeIn, FadeOut, SlideInRight, SlideOutRight } from 'react-native-reanimated';
@@ -508,9 +508,12 @@ function MainApp() {
               <TouchableOpacity onPress={() => setScreen('start')} style={{ padding: 8 }}>
                 <ArrowLeft color="rgba(255,255,255,0.8)" size={players.length > 6 ? 24 : 28} />
               </TouchableOpacity>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                 <TouchableOpacity onPress={() => setScreen('history')} style={{ padding: 8 }}>
-                  <History color="rgba(255,255,255,0.8)" size={players.length > 6 ? 24 : 28} />
+                  <ScrollText color="rgba(255,255,255,0.8)" size={players.length > 6 ? 24 : 28} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleShare} style={{ padding: 8 }}>
+                  <Share2 color="rgba(255,255,255,0.8)" size={players.length > 6 ? 24 : 28} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setShowResetModal(true)} style={{ padding: 8 }}>
                   <RotateCcw color="rgba(255,255,255,0.8)" size={players.length > 6 ? 24 : 28} />
@@ -641,15 +644,13 @@ function MainApp() {
                 <ArrowLeft color="rgba(255,255,255,0.8)" size={28} />
               </TouchableOpacity>
               <Text style={{ color: '#FFF', fontSize: 20, fontWeight: 'bold' }}>Score History</Text>
-              <TouchableOpacity onPress={handleShare} style={{ padding: 8 }}>
-                <Share2 color="#3B82F6" size={24} />
-              </TouchableOpacity>
+              <View style={{ width: 44 }} />
             </View>
 
             {/* List */}
             {history.length === 0 ? (
               <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                <History color="rgba(255,255,255,0.3)" size={64} strokeWidth={1} />
+                <ScrollText color="rgba(255,255,255,0.3)" size={64} strokeWidth={1} />
                 <Text style={{ color: 'rgba(255,255,255,0.3)', fontSize: 18, fontWeight: '500' }}>No scores recorded yet</Text>
               </View>
             ) : (
