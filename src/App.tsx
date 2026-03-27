@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View, Text, TouchableOpacity, useWindowDimensions, TextInput, ScrollView, Animated as RNAnimated, Easing, ImageBackground, FlatList, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, TouchableOpacity, useWindowDimensions, TextInput, ScrollView, Animated as RNAnimated, Easing, ImageBackground, FlatList, Keyboard, TouchableWithoutFeedback, Share } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { Meeple } from './components/Meeple';
-import { Settings, ArrowLeft, RotateCcw, ChevronLeft, ChevronRight, Loader2, History } from 'lucide-react-native';
+import { Settings, ArrowLeft, RotateCcw, ChevronLeft, ChevronRight, Loader2, History, Share2 } from 'lucide-react-native';
 import { useKeepAwake } from 'expo-keep-awake';
 import * as Haptics from 'expo-haptics';
 import Animated, { FadeIn, FadeOut, SlideInRight, SlideOutRight } from 'react-native-reanimated';
@@ -42,6 +42,21 @@ const COLORS = [
   { name: 'Brown', hex: '#78350F', image: require('../assets/Meeple_brown_Vectorizer-AI.svg') },
 ];
 const STORAGE_KEY = '@carcassonne_game_state';
+
+const getMeepleEmoji = (hex: string) => {
+  switch (hex.toUpperCase()) {
+    case '#B23B2B': return '🟥';
+    case '#2EB84B': return '🟩';
+    case '#1E40AF': return '🟦';
+    case '#1A1A1A': return '⬛';
+    case '#FACC15': return '🟨';
+    case '#6B7280': return '⬜';
+    case '#E678A7': return '🟪';
+    case '#F97316': return '🟧';
+    case '#78350F': return '🟫';
+    default: return '🔘';
+  }
+};
 
 export default function App() {
   useKeepAwake();
@@ -249,6 +264,43 @@ export default function App() {
       await AsyncStorage.removeItem(STORAGE_KEY);
     } catch (e) {
       console.error('Failed to clear state:', e);
+    }
+  };
+
+  const handleShare = async () => {
+    if (players.length === 0) return;
+
+    try {
+      const sorted = [...players].sort((a, b) => b.score - a.score);
+      const now = new Date();
+      const timestamp = now.toLocaleString([], { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+
+      let message = `🏆 Carcassonne Scoreboard 🏆\n`;
+      message += `${timestamp}\n`;
+      message += `---------------------------\n`;
+
+      sorted.forEach((player, index) => {
+        const rank = index + 1;
+        const emoji = getMeepleEmoji(player.color);
+        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
+        const name = player.name || `Player ${rank}`;
+        
+        message += `${rank}. ${emoji} ${name}: ${player.score} pts ${medal}\n`;
+      });
+
+      message += `---------------------------\n`;
+      message += `Shared from Carcassonne Scoring App`;
+
+      await Share.share({ message });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (error) {
+      console.error('Error sharing scoreboard:', error);
     }
   };
 
@@ -569,7 +621,9 @@ export default function App() {
                 <ArrowLeft color="rgba(255,255,255,0.8)" size={28} />
               </TouchableOpacity>
               <Text style={{ color: '#FFF', fontSize: 20, fontWeight: 'bold' }}>Score History</Text>
-              <View style={{ width: 44 }} />
+              <TouchableOpacity onPress={handleShare} style={{ padding: 8 }}>
+                <Share2 color="#3B82F6" size={24} />
+              </TouchableOpacity>
             </View>
 
             {/* List */}
