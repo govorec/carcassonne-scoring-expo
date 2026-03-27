@@ -71,6 +71,55 @@ function MainApp() {
   const [showResetModal, setShowResetModal] = useState(false);
   const [showSkipLoading, setShowSkipLoading] = useState(false);
   const [tempScores, setTempScores] = useState<Record<number, number>>({});
+
+  const getLayoutConfig = () => {
+    const count = players?.length || 0;
+    if (count <= 4) {
+      return {
+        meepleSize: 56,
+        scoreFontSize: 64,
+        cardPadding: 16,
+        buttonPadding: 16,
+        marginVertical: 8,
+        headerPaddingTop: insets.top + 16,
+        btnFontSize: 20
+      };
+    }
+    if (count === 5) {
+      return {
+        meepleSize: 52,
+        scoreFontSize: 60,
+        cardPadding: 14,
+        buttonPadding: 14,
+        marginVertical: 6,
+        headerPaddingTop: insets.top + 12,
+        btnFontSize: 18
+      };
+    }
+    if (count === 6) {
+      return {
+        meepleSize: 44,
+        scoreFontSize: 50,
+        cardPadding: 10,
+        buttonPadding: 10,
+        marginVertical: 4,
+        headerPaddingTop: insets.top + 8,
+        btnFontSize: 16
+      };
+    }
+    return { // 7-9 players
+      meepleSize: 36,
+      scoreFontSize: 44,
+      cardPadding: 8,
+      buttonPadding: 8,
+      marginVertical: 3,
+      headerPaddingTop: insets.top + 8,
+      btnFontSize: 14
+    };
+  };
+
+  const layout = getLayoutConfig();
+
   const timeouts = useRef<Record<number, any>>({});
   const playersRef = useRef<Player[]>([]);
   const tempScoresRef = useRef<Record<number, number>>({});
@@ -307,32 +356,7 @@ function MainApp() {
     }
   };
 
-  const scale = useMemo(() => {
-    const count = players.length;
-    const isShort = windowHeight < 700;
-    const isVeryShort = windowHeight < 600;
 
-    if (count <= 3) {
-      if (isVeryShort) return { meeple: 56, score: 'text-5xl', btnPy: 'py-2', btnText: 'text-base', rowP: 'px-6 py-2', gap: 'gap-2' };
-      if (isShort) return { meeple: 70, score: 'text-6xl', btnPy: 'py-3', btnText: 'text-lg', rowP: 'px-7 py-3', gap: 'gap-3' };
-      return { meeple: 80, score: 'text-7xl', btnPy: 'py-4', btnText: 'text-xl', rowP: 'px-8 py-4', gap: 'gap-4' };
-    }
-    if (count <= 4) {
-      if (isVeryShort) return { meeple: 44, score: 'text-4xl', btnPy: 'py-1.5', btnText: 'text-sm', rowP: 'px-5 py-1.5', gap: 'gap-1.5' };
-      if (isShort) return { meeple: 56, score: 'text-5xl', btnPy: 'py-2', btnText: 'text-base', rowP: 'px-6 py-2', gap: 'gap-2' };
-      return { meeple: 70, score: 'text-6xl', btnPy: 'py-3', btnText: 'text-lg', rowP: 'px-7 py-3', gap: 'gap-3' };
-    }
-    if (count <= 6) {
-      if (isVeryShort) return { meeple: 36, score: 'text-3xl', btnPy: 'py-1', btnText: 'text-xs', rowP: 'px-4 py-1', gap: 'gap-1' };
-      if (isShort) return { meeple: 44, score: 'text-4xl', btnPy: 'py-1.5', btnText: 'text-sm', rowP: 'px-5 py-1.5', gap: 'gap-1.5' };
-      return { meeple: 56, score: 'text-5xl', btnPy: 'py-2', btnText: 'text-base', rowP: 'px-6 py-2', gap: 'gap-2' };
-    }
-    if (count <= 8) {
-      if (isShort) return { meeple: 36, score: 'text-3xl', btnPy: 'py-1', btnText: 'text-xs', rowP: 'px-4 py-1', gap: 'gap-1' };
-      return { meeple: 44, score: 'text-4xl', btnPy: 'py-1.5', btnText: 'text-sm', rowP: 'px-5 py-1.5', gap: 'gap-1.5' };
-    }
-    return { meeple: 32, score: 'text-2xl', btnPy: 'py-0.5', btnText: 'text-[10px]', rowP: 'px-3 py-0.5', gap: 'gap-0.5' };
-  }, [players.length, windowHeight]);
 
   return (
     <ImageBackground
@@ -529,19 +553,19 @@ function MainApp() {
         >
           <View style={{ flex: 1 }}>
             {/* Header with explicit Notch Protection */}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 8, paddingTop: insets.top + (players.length > 6 ? 8 : 16) }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 8, paddingTop: layout.headerPaddingTop }}>
               <TouchableOpacity onPress={() => setScreen('start')} style={{ padding: 8 }}>
-                <ArrowLeft color="rgba(255,255,255,0.8)" size={players.length > 6 ? 24 : 28} />
+                <ArrowLeft color="rgba(255,255,255,0.8)" size={players.length > 4 ? 24 : 28} />
               </TouchableOpacity>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                 <TouchableOpacity onPress={() => setScreen('history')} style={{ padding: 8 }}>
-                  <ScrollText color="rgba(255,255,255,0.8)" size={players.length > 6 ? 24 : 28} />
+                  <ScrollText color="rgba(255,255,255,0.8)" size={players.length > 4 ? 24 : 28} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleShare} style={{ padding: 8 }}>
-                  <Share2 color="rgba(255,255,255,0.8)" size={players.length > 6 ? 24 : 28} />
+                  <Share2 color="rgba(255,255,255,0.8)" size={players.length > 4 ? 24 : 28} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setShowResetModal(true)} style={{ padding: 8 }}>
-                  <RotateCcw color="rgba(255,255,255,0.8)" size={players.length > 6 ? 24 : 28} />
+                  <RotateCcw color="rgba(255,255,255,0.8)" size={players.length > 4 ? 24 : 28} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -549,17 +573,11 @@ function MainApp() {
             {/* List of Player Cards */}
             <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 24 }}>
               {players.map((player) => {
-                const isDense = players.length > 6;
-                const cardPadding = isDense ? 12 : 16;
-                const meepleSize = isDense ? 44 : 56;
-                const scoreFontSize = isDense ? 48 : 64;
-                const buttonPadding = isDense ? 10 : 16;
-
                 return (
                   <View key={player.id} style={{
                     backgroundColor: '#1E1E1E',
                     borderRadius: 16,
-                    marginVertical: isDense ? 4 : 8,
+                    marginVertical: layout.marginVertical,
                     marginHorizontal: 16,
                     overflow: 'hidden',
                     elevation: 5,
@@ -569,10 +587,10 @@ function MainApp() {
                     shadowRadius: 4
                   }}>
                     {/* Top Row (Info) */}
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: cardPadding }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: layout.cardPadding }}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
                         <View style={{ position: 'relative' }}>
-                          <Meeple color={player.color} size={meepleSize} image={player.image} />
+                          <Meeple color={player.color} size={layout.meepleSize} image={player.image} />
                           {tempScores[player.id] !== undefined && (
                             <Animated.View entering={FadeIn} exiting={FadeOut} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
                               <Text style={{ color: '#FFF', fontWeight: '900', fontSize: 24, textShadowColor: '#000', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 4 }}>
@@ -589,7 +607,7 @@ function MainApp() {
                       </View>
                       <Text style={{ 
                         color: player.color, 
-                        fontSize: scoreFontSize, 
+                        fontSize: layout.scoreFontSize, 
                         fontWeight: 'bold', 
                         letterSpacing: -2,
                         ...(player.color === '#1A1A1A' ? {
@@ -613,11 +631,11 @@ function MainApp() {
                         <TouchableOpacity
                           key={btn.label}
                           onPress={() => updateScore(player.id, btn.val)}
-                          style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: buttonPadding, minHeight: 44 }}
+                          style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: layout.buttonPadding, minHeight: 44 }}
                         >
                           <Text style={{ 
                             color: player.color, 
-                            fontSize: isDense ? 16 : 20, 
+                            fontSize: layout.btnFontSize, 
                             fontWeight: 'bold',
                             ...(player.color === '#1A1A1A' ? {
                               textShadowColor: 'rgba(255,255,255,0.8)',
