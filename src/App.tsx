@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, TouchableOpacity, useWindowDimensions, TextInput, ScrollView, Animated as RNAnimated, Easing, ImageBackground, FlatList, Keyboard, TouchableWithoutFeedback, Share } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { Meeple } from './components/Meeple';
 import { Settings, ArrowLeft, RotateCcw, ChevronLeft, ChevronRight, Loader2, History, Share2 } from 'lucide-react-native';
@@ -60,6 +60,7 @@ const getMeepleEmoji = (hex: string) => {
 
 export default function App() {
   useKeepAwake();
+  const insets = useSafeAreaInsets();
   const [screen, setScreen] = useState<Screen>('loading');
   const [playerCount, setPlayerCount] = useState(6);
   const [selectedColors, setSelectedColors] = useState(COLORS.slice(0, 6));
@@ -501,9 +502,9 @@ export default function App() {
           exiting={SlideOutRight}
           style={{ flex: 1 }}
         >
-          <SafeAreaView style={{ flex: 1 }}>
-            {/* Header */}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 8, paddingTop: players.length > 6 ? 16 : 32 }}>
+          <View style={{ flex: 1 }}>
+            {/* Header with explicit Notch Protection */}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 8, paddingTop: insets.top + (players.length > 6 ? 8 : 16) }}>
               <TouchableOpacity onPress={() => setScreen('start')} style={{ padding: 8 }}>
                 <ArrowLeft color="rgba(255,255,255,0.8)" size={players.length > 6 ? 24 : 28} />
               </TouchableOpacity>
@@ -601,7 +602,7 @@ export default function App() {
                 </View>
               </Animated.View>
             )}
-          </SafeAreaView>
+          </View>
         </Animated.View>
       )}
 
@@ -614,9 +615,9 @@ export default function App() {
           {/* Dimmer overlay just for history */}
           <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.7)' }} />
 
-          <SafeAreaView style={{ flex: 1 }}>
-            {/* Header */}
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 20, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.1)' }}>
+          <View style={{ flex: 1 }}>
+            {/* Header with explicit Notch Protection */}
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingBottom: 20, paddingTop: insets.top + 20, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.1)' }}>
               <TouchableOpacity onPress={() => setScreen('scoring')} style={{ padding: 8 }}>
                 <ArrowLeft color="rgba(255,255,255,0.8)" size={28} />
               </TouchableOpacity>
@@ -671,7 +672,7 @@ export default function App() {
                 )}
               />
             )}
-          </SafeAreaView>
+          </View>
         </Animated.View>
       )}
     </ImageBackground>
