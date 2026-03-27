@@ -45,15 +45,15 @@ const STORAGE_KEY = '@carcassonne_game_state';
 
 const getMeepleEmoji = (hex: string) => {
   switch (hex.toUpperCase()) {
-    case '#B23B2B': return '🟥';
-    case '#2EB84B': return '🟩';
-    case '#1E40AF': return '🟦';
-    case '#1A1A1A': return '⬛';
-    case '#FACC15': return '🟨';
-    case '#6B7280': return '⬜';
-    case '#E678A7': return '🟪';
-    case '#F97316': return '🟧';
-    case '#78350F': return '🟫';
+    case '#B23B2B': return '❤️';
+    case '#2EB84B': return '💚';
+    case '#1E40AF': return '💙';
+    case '#1A1A1A': return '🖤';
+    case '#FACC15': return '💛';
+    case '#6B7280': return '🩶';
+    case '#E678A7': return '🩷';
+    case '#F97316': return '🧡';
+    case '#78350F': return '🤎';
     default: return '🔘';
   }
 };
@@ -325,12 +325,12 @@ function MainApp() {
     try {
       const sorted = [...players].sort((a, b) => b.score - a.score);
       const now = new Date();
-      const timestamp = now.toLocaleString([], { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric', 
-        hour: '2-digit', 
-        minute: '2-digit' 
+      const timestamp = now.toLocaleString([], {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
       });
 
       let message = `🏆 Carcassonne Scoreboard 🏆\n`;
@@ -342,7 +342,7 @@ function MainApp() {
         const emoji = getMeepleEmoji(player.color);
         const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
         const name = player.name || `Player ${rank}`;
-        
+
         message += `${rank}. ${emoji} ${name}: ${player.score} pts ${medal}\n`;
       });
 
@@ -605,10 +605,10 @@ function MainApp() {
                           </Text>
                         )}
                       </View>
-                      <Text style={{ 
-                        color: player.color, 
-                        fontSize: layout.scoreFontSize, 
-                        fontWeight: 'bold', 
+                      <Text style={{
+                        color: player.color,
+                        fontSize: layout.scoreFontSize,
+                        fontWeight: 'bold',
                         letterSpacing: -2,
                         ...(player.color === '#1A1A1A' ? {
                           textShadowColor: 'rgba(255,255,255,0.8)',
@@ -633,9 +633,9 @@ function MainApp() {
                           onPress={() => updateScore(player.id, btn.val)}
                           style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: layout.buttonPadding, minHeight: 44 }}
                         >
-                          <Text style={{ 
-                            color: player.color, 
-                            fontSize: layout.btnFontSize, 
+                          <Text style={{
+                            color: player.color,
+                            fontSize: layout.btnFontSize,
                             fontWeight: 'bold',
                             ...(player.color === '#1A1A1A' ? {
                               textShadowColor: 'rgba(255,255,255,0.8)',
