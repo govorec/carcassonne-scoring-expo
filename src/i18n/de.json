@@ -1,0 +1,42 @@
+{
+  "common": {
+    "app_title": "Carcassonne",
+    "loading": "Initialisierung",
+    "preparing": "Spielstandsberechnung wird vorbereitet...",
+    "skip": "Laden überspringen",
+    "cancel": "Abbrechen",
+    "yes_reset": "Ja, Zurücksetzen"
+  },
+  "start": {
+    "players": "Spieler",
+    "custom_names": "Eigene Namen",
+    "start_button": "Neues Spiel",
+    "placeholder_name": "%{color}"
+  },
+  "scoring": {
+    "history": "Verlauf",
+    "share": "Teilen",
+    "reset": "Meeples",
+    "reset_confirm": "Alle Spielstände zurücksetzen?",
+    "points": "Pkte"
+  },
+  "history": {
+    "title": "Punktestand-Verlauf",
+    "empty": "Noch keine Spielstände aufgezeichnet"
+  },
+  "share": {
+    "title": "🏆 Carcassonne Scoreboard 🏆",
+    "shared_from": "Geteilt aus der Carcassonne Scoring App"
+  },
+  "colors": {
+    "Red": "Roter",
+    "Green": "Grüner",
+    "Blue": "Blauer",
+    "Black": "Schwarzer",
+    "Yellow": "Gelber",
+    "Gray": "Grauer",
+    "Pink": "Rosa",
+    "Orange": "Oranger",
+    "Brown": "Brauner"
+  }
+}

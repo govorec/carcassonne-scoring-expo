@@ -8,6 +8,7 @@ import { Settings, ArrowLeft, RotateCcw, ChevronLeft, ChevronRight, Loader2, His
 import { useKeepAwake } from 'expo-keep-awake';
 import * as Haptics from 'expo-haptics';
 import Animated, { FadeIn, FadeOut, SlideInRight, SlideOutRight } from 'react-native-reanimated';
+import i18n from './i18n';
 import '../global.css';
 
 type Screen = 'start' | 'scoring' | 'loading' | 'history';
@@ -31,15 +32,15 @@ interface HistoryEntry {
 }
 
 const COLORS = [
-  { name: 'Red', hex: '#B23B2B', image: require('../assets/Meeple_red.svg') },
-  { name: 'Green', hex: '#2EB84B', image: require('../assets/Meeple_green.svg') },
-  { name: 'Blue', hex: '#1E40AF', image: require('../assets/Meeple_blue.svg') },
-  { name: 'Black', hex: '#1A1A1A', image: require('../assets/Meeple_black.svg') },
-  { name: 'Yellow', hex: '#FACC15', image: require('../assets/Meeple_yellow.svg') },
-  { name: 'Gray', hex: '#6B7280', image: require('../assets/Meeple_gray.svg') },
-  { name: 'Pink', hex: '#E678A7', image: require('../assets/Meeple_pink.svg') },
-  { name: 'Orange', hex: '#F97316', image: require('../assets/Meeple_orange.svg') },
-  { name: 'Brown', hex: '#78350F', image: require('../assets/Meeple_brown.svg') },
+  { name: i18n.t('colors.Red'), hex: '#B23B2B', image: require('../assets/Meeple_red.svg') },
+  { name: i18n.t('colors.Green'), hex: '#2EB84B', image: require('../assets/Meeple_green.svg') },
+  { name: i18n.t('colors.Blue'), hex: '#1E40AF', image: require('../assets/Meeple_blue.svg') },
+  { name: i18n.t('colors.Black'), hex: '#1A1A1A', image: require('../assets/Meeple_black.svg') },
+  { name: i18n.t('colors.Yellow'), hex: '#FACC15', image: require('../assets/Meeple_yellow.svg') },
+  { name: i18n.t('colors.Gray'), hex: '#6B7280', image: require('../assets/Meeple_gray.svg') },
+  { name: i18n.t('colors.Pink'), hex: '#E678A7', image: require('../assets/Meeple_pink.svg') },
+  { name: i18n.t('colors.Orange'), hex: '#F97316', image: require('../assets/Meeple_orange.svg') },
+  { name: i18n.t('colors.Brown'), hex: '#78350F', image: require('../assets/Meeple_brown.svg') },
 ];
 const STORAGE_KEY = '@carcassonne_game_state';
 
@@ -333,7 +334,7 @@ function MainApp() {
         minute: '2-digit'
       });
 
-      let message = `🏆 Carcassonne Scoreboard 🏆\n`;
+      let message = `${i18n.t('share.title')}\n`;
       message += `${timestamp}\n`;
       message += `---------------------------\n`;
 
@@ -343,11 +344,11 @@ function MainApp() {
         const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
         const name = player.name || `Player ${rank}`;
 
-        message += `${rank}. ${emoji} ${name}: ${player.score} pts ${medal}\n`;
+        message += `${rank}. ${emoji} ${name}: ${player.score} ${i18n.t('scoring.points')} ${medal}\n`;
       });
 
       message += `---------------------------\n`;
-      message += `Shared from Carcassonne Scoring App`;
+      message += i18n.t('share.shared_from');
 
       await Share.share({ message });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -374,8 +375,8 @@ function MainApp() {
           <RNAnimated.View style={{ transform: [{ rotate: spin }], marginBottom: 24, opacity: 0.4 }}>
             <Loader2 color="white" size={48} />
           </RNAnimated.View>
-          <Text style={{ fontSize: 20, color: '#FFF', fontWeight: 'bold', letterSpacing: 1, marginBottom: 8, textAlign: 'center' }}>Initializing</Text>
-          <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, marginBottom: 32, textAlign: 'center' }}>Preparing board game scoring...</Text>
+          <Text style={{ fontSize: 20, color: '#FFF', fontWeight: 'bold', letterSpacing: 1, marginBottom: 8, textAlign: 'center' }}>{i18n.t('common.loading')}</Text>
+          <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, marginBottom: 32, textAlign: 'center' }}>{i18n.t('common.preparing')}</Text>
 
           {showSkipLoading && (
             <Animated.View entering={FadeIn}>
@@ -383,7 +384,7 @@ function MainApp() {
                 onPress={() => setScreen('start')}
                 style={{ paddingHorizontal: 24, paddingVertical: 8, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 999, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' }}
               >
-                <Text style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>Skip Loading</Text>
+                <Text style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>{i18n.t('common.skip')}</Text>
               </TouchableOpacity>
             </Animated.View>
           )}
@@ -411,7 +412,7 @@ function MainApp() {
                     textShadowOffset: { width: 0, height: 4 },
                     textShadowRadius: 8
                   }}>
-                    Carcassonne
+                    {i18n.t('common.app_title')}
                   </Text>
                 </View>
 
@@ -433,7 +434,7 @@ function MainApp() {
                         {isCustomNamingEnabled && (
                           <Animated.View entering={FadeIn} exiting={FadeOut} style={{ width: '100%', paddingHorizontal: 8, marginTop: 12 }}>
                             <TextInput
-                              placeholder={color.name}
+                              placeholder={i18n.t('start.placeholder_name', { color: color.name })}
                               placeholderTextColor="rgba(255,255,255,0.4)"
                               value={customNames[i] || ''}
                               onChangeText={(text) => setCustomNames(prev => ({ ...prev, [i]: text }))}
@@ -461,7 +462,7 @@ function MainApp() {
 
                   {/* Custom Names Toggle */}
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: 'rgba(255,255,255,0.1)', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' }}>
-                    <Text style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: 1, fontWeight: 'bold', color: 'rgba(255,255,255,0.6)' }}>Custom Names</Text>
+                    <Text style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: 1, fontWeight: 'bold', color: 'rgba(255,255,255,0.6)' }}>{i18n.t('start.custom_names')}</Text>
                     <TouchableOpacity
                       onPress={() => setIsCustomNamingEnabled(!isCustomNamingEnabled)}
                       style={{
@@ -495,7 +496,7 @@ function MainApp() {
                         <ChevronRight color="rgba(255,255,255,0.5)" size={48} strokeWidth={3} />
                       </TouchableOpacity>
                     </View>
-                    <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, textTransform: 'uppercase', letterSpacing: 2, fontWeight: '600' }}>Players</Text>
+                    <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, textTransform: 'uppercase', letterSpacing: 2, fontWeight: '600' }}>{i18n.t('start.players')}</Text>
                   </View>
 
                   {/* Start Button Section */}
@@ -513,7 +514,7 @@ function MainApp() {
                         borderColor: 'rgba(255,255,255,0.2)'
                       }}
                     >
-                      <Text style={{ color: '#FFF', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 2, fontSize: 18 }}>Start</Text>
+                      <Text style={{ color: '#FFF', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 2, fontSize: 18 }}>{i18n.t('start.start_button')}</Text>
                     </TouchableOpacity>
 
                     {players.length > 0 && (
@@ -655,13 +656,13 @@ function MainApp() {
             {showResetModal && (
               <Animated.View entering={FadeIn} exiting={FadeOut} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 50, alignItems: 'center', justifyContent: 'center', padding: 24, backgroundColor: 'rgba(0,0,0,0.8)' }}>
                 <View style={{ backgroundColor: '#262626', padding: 32, borderRadius: 24, width: '100%', maxWidth: 320, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }}>
-                  <Text style={{ color: '#FFF', fontSize: 24, fontWeight: 'bold', marginBottom: 24 }}>Reset all scores?</Text>
+                  <Text style={{ color: '#FFF', fontSize: 24, fontWeight: 'bold', marginBottom: 24 }}>{i18n.t('scoring.reset_confirm')}</Text>
                   <View style={{ width: '100%', gap: 12 }}>
                     <TouchableOpacity onPress={resetScores} style={{ width: '100%', paddingVertical: 16, backgroundColor: '#DC2626', borderRadius: 12, alignItems: 'center', marginBottom: 12 }}>
-                      <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 18 }}>Yes, Reset</Text>
+                      <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 18 }}>{i18n.t('common.yes_reset')}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => setShowResetModal(false)} style={{ width: '100%', paddingVertical: 16, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 12, alignItems: 'center' }}>
-                      <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 18 }}>Cancel</Text>
+                      <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 18 }}>{i18n.t('common.cancel')}</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -686,7 +687,7 @@ function MainApp() {
               <TouchableOpacity onPress={() => setScreen('scoring')} style={{ padding: 8 }}>
                 <ArrowLeft color="rgba(255,255,255,0.8)" size={28} />
               </TouchableOpacity>
-              <Text style={{ color: '#FFF', fontSize: 20, fontWeight: 'bold' }}>Score History</Text>
+              <Text style={{ color: '#FFF', fontSize: 20, fontWeight: 'bold' }}>{i18n.t('history.title')}</Text>
               <View style={{ width: 44 }} />
             </View>
 
@@ -694,7 +695,7 @@ function MainApp() {
             {history.length === 0 ? (
               <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                 <ScrollText color="rgba(255,255,255,0.3)" size={64} strokeWidth={1} />
-                <Text style={{ color: 'rgba(255,255,255,0.3)', fontSize: 18, fontWeight: '500' }}>No scores recorded yet</Text>
+                <Text style={{ color: 'rgba(255,255,255,0.3)', fontSize: 18, fontWeight: '500' }}>{i18n.t('history.empty')}</Text>
               </View>
             ) : (
               <FlatList

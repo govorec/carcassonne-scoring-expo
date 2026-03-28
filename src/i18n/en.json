@@ -1,0 +1,42 @@
+{
+  "common": {
+    "app_title": "Carcassonne",
+    "loading": "Initializing",
+    "preparing": "Preparing board game scoring...",
+    "skip": "Skip Loading",
+    "cancel": "Cancel",
+    "yes_reset": "Yes, Reset"
+  },
+  "start": {
+    "players": "Players",
+    "custom_names": "Custom Names",
+    "start_button": "New Game",
+    "placeholder_name": "%{color}"
+  },
+  "scoring": {
+    "history": "History",
+    "share": "Share",
+    "reset": "Reset",
+    "reset_confirm": "Reset all scores?",
+    "points": "pts"
+  },
+  "history": {
+    "title": "Score History",
+    "empty": "No scores recorded yet"
+  },
+  "share": {
+    "title": "🏆 Carcassonne Scoreboard 🏆",
+    "shared_from": "Shared from Carcassonne Scoring App"
+  },
+  "colors": {
+    "Red": "Red",
+    "Green": "Green",
+    "Blue": "Blue",
+    "Black": "Black",
+    "Yellow": "Yellow",
+    "Gray": "Gray",
+    "Pink": "Pink",
+    "Orange": "Orange",
+    "Brown": "Brown"
+  }
+}
