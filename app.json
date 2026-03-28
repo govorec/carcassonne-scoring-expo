@@ -14,11 +14,16 @@
     "ios": {
       "bundleIdentifier": "com.okdesign.carcassonnescoring",
       "buildNumber": "1",
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
+      "package": "com.okdesign.carcassonnescoring",
+      "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
+        "foregroundImage": "./assets/icon_transparent.png",
         "backgroundColor": "#000000"
       }
     },
@@ -28,6 +33,11 @@
     "plugins": [
       "expo-asset"
     ],
-    "newArchEnabled": false
+    "newArchEnabled": false,
+    "extra": {
+      "eas": {
+        "projectId": "c2f63a26-35de-4629-b8b5-c882a322d66d"
+      }
+    }
   }
 }
