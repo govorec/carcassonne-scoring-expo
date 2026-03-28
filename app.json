@@ -33,7 +33,7 @@
     "plugins": [
       "expo-asset"
     ],
-    "newArchEnabled": false,
+    "newArchEnabled": true,
     "extra": {
       "eas": {
         "projectId": "c2f63a26-35de-4629-b8b5-c882a322d66d"
