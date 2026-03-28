@@ -7,13 +7,12 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "splash": {
-      "image": "./assets/bg.jpg",
+      "image": "./assets/bg.png",
       "resizeMode": "cover",
       "backgroundColor": "#000000"
     },
     "ios": {
       "bundleIdentifier": "com.okdesign.carcassonnescoring",
-      "buildNumber": "1",
       "supportsTablet": true,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -21,7 +20,6 @@
     },
     "android": {
       "package": "com.okdesign.carcassonnescoring",
-      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#000000"
