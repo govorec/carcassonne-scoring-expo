@@ -7,8 +7,8 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "splash": {
-      "image": "./assets/icon.png",
-      "resizeMode": "contain",
+      "image": "./assets/bg.jpg",
+      "resizeMode": "cover",
       "backgroundColor": "#000000"
     },
     "ios": {
@@ -23,7 +23,7 @@
       "package": "com.okdesign.carcassonnescoring",
       "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon_transparent.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#000000"
       }
     },
