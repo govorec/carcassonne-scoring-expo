@@ -12,6 +12,8 @@
       "backgroundColor": "#000000"
     },
     "ios": {
+      "bundleIdentifier": "com.okdesign.carcassonnescoring",
+      "buildNumber": "1",
       "supportsTablet": true
     },
     "android": {
