@@ -196,8 +196,6 @@ function MainApp() {
       console.log('App ready');
     };
 
-    //AsyncStorage.clear().then(() => console.log('Data Cleared!'));
-
     initialize();
 
     const skipTimer = setTimeout(() => {
@@ -633,9 +631,9 @@ function MainApp() {
                           </Text>
                         )}
                       </View>
-                      <Text 
-                        adjustsFontSizeToFit 
-                        numberOfLines={1} 
+                      <Text
+                        adjustsFontSizeToFit
+                        numberOfLines={1}
                         style={{
                           textAlign: 'right',
                           minWidth: 60,
@@ -760,11 +758,11 @@ function MainApp() {
                         {entry.value > 0 ? `+${entry.value}` : entry.value}
                       </Text>
 
-                      <Text style={{ 
-                        fontSize: 24, 
-                        fontWeight: 'bold', 
-                        color: entry.playerColor, 
-                        minWidth: 40, 
+                      <Text style={{
+                        fontSize: 24,
+                        fontWeight: 'bold',
+                        color: entry.playerColor,
+                        minWidth: 40,
                         textAlign: 'right',
                         ...(entry.playerColor === '#1A1A1A' ? {
                           textShadowColor: 'rgba(255,255,255,0.8)',
@@ -873,6 +871,7 @@ function MainApp() {
                             setCustomNames({});
                             setSelectedColors(COLORS.slice(0, 6));
                             setScreen('start');
+                            //Alert.alert('Data Cleared', 'App has been successfully reset.');
                           } catch (error) {
                             console.error('Failed to clear data', error);
                           }
