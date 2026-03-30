@@ -9,6 +9,7 @@
   },
   "start": {
     "players": "Гравці",
+    "players_many": "Гравців",
     "custom_names": "Власні імена",
     "start_button": "Нова гра",
     "placeholder_name": "%{color}"

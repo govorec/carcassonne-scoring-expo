@@ -521,7 +521,9 @@ function MainApp() {
                         <ChevronRight color="rgba(255,255,255,0.5)" size={48} strokeWidth={3} />
                       </TouchableOpacity>
                     </View>
-                    <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, textTransform: 'uppercase', letterSpacing: 2, fontWeight: '600' }}>{i18n.t('start.players')}</Text>
+                    <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, textTransform: 'uppercase', letterSpacing: 2, fontWeight: '600' }}>
+                      {['ru', 'uk'].includes(locale) && playerCount >= 5 ? i18n.t('start.players_many') : i18n.t('start.players')}
+                    </Text>
                   </View>
 
                   {/* Start Button Section */}

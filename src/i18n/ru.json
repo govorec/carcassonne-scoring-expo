@@ -8,7 +8,8 @@
     "yes_reset": "Да, сбросить"
   },
   "start": {
-    "players": "Игроки",
+    "players": "Игрока",
+    "players_many": "Игроков",
     "custom_names": "Свои имена",
     "start_button": "Новая игра",
     "placeholder_name": "%{color}"
