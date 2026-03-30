@@ -28,6 +28,15 @@
     "title": "🏆 Puntuaciones de Carcassonne 🏆",
     "shared_from": "Compartido desde la App de Puntuación Carcassonne"
   },
+  "settings": {
+    "title": "Ajustes",
+    "timeout": "Visibilidad de puntuación: %{seconds}s",
+    "language": "Idioma",
+    "reset": "Borrar todos los datos",
+    "reset_alert_title": "Restablecer datos",
+    "reset_alert_msg": "¿Estás seguro de que deseas borrar todas las puntuaciones y el historial?",
+    "version": "v%{version}"
+  },
   "colors": {
     "Red": "Rojo",
     "Green": "Verde",

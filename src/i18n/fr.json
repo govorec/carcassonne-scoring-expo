@@ -28,6 +28,15 @@
     "title": "🏆 Tableau des scores Carcassonne 🏆",
     "shared_from": "Partagé depuis l'application de score Carcassonne"
   },
+  "settings": {
+    "title": "Paramètres",
+    "timeout": "Visibilité du score : %{seconds}s",
+    "language": "Langue",
+    "reset": "Effacer toutes les données",
+    "reset_alert_title": "Réinitialiser les données",
+    "reset_alert_msg": "Êtes-vous sûr de vouloir effacer tous les scores et l'historique ?",
+    "version": "v%{version}"
+  },
   "colors": {
     "Red": "Rouge",
     "Green": "Vert",

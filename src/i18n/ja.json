@@ -28,6 +28,15 @@
     "title": "🏆 カルカソンヌ スコアボード 🏆",
     "shared_from": "カルカソンヌ スコアボード アプリから共有"
   },
+  "settings": {
+    "title": "設定",
+    "timeout": "スコア表示時間: %{seconds}秒",
+    "language": "言語",
+    "reset": "全データをリセット",
+    "reset_alert_title": "データリセット",
+    "reset_alert_msg": "すべてのスコアと履歴を消去してもよろしいですか？",
+    "version": "v%{version}"
+  },
   "colors": {
     "Red": "赤",
     "Green": "緑",

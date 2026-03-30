@@ -28,6 +28,15 @@
     "title": "🏆 Таблица очков Carcassonne 🏆",
     "shared_from": "Отправлено из приложения Carcassonne Scoring"
   },
+  "settings": {
+    "title": "Настройки",
+    "timeout": "Отображение очков: %{seconds}с",
+    "language": "Язык",
+    "reset": "Сбросить все данные",
+    "reset_alert_title": "Сброс данных",
+    "reset_alert_msg": "Вы уверены, что хотите удалить все очки и историю?",
+    "version": "v%{version}"
+  },
   "colors": {
     "Red": "Красный",
     "Green": "Зеленый",

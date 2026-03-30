@@ -28,6 +28,15 @@
     "title": "🏆 卡卡颂得分榜 🏆",
     "shared_from": "分享自卡卡颂计分板 App"
   },
+  "settings": {
+    "title": "设置",
+    "timeout": "分数显示时长: %{seconds}秒",
+    "language": "语言",
+    "reset": "重置所有数据",
+    "reset_alert_title": "重置数据",
+    "reset_alert_msg": "您确定要清除所有分数和历史记录吗？",
+    "version": "v%{version}"
+  },
   "colors": {
     "Red": "红色",
     "Green": "绿色",
