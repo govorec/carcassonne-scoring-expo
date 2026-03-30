@@ -651,8 +651,8 @@ function MainApp() {
                     {/* Bottom Row (Buttons) */}
                     <View style={{ flexDirection: 'row', backgroundColor: 'rgba(0,0,0,0.2)', borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.05)' }}>
                       {[
-                        { label: '-1', val: -1 },
                         { label: '-10', val: -10 },
+                        { label: '-1', val: -1 },
                         { label: '+1', val: 1 },
                         { label: '+10', val: 10 },
                       ].map((btn) => (
