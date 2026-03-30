@@ -1,0 +1,42 @@
+{
+  "common": {
+    "app_title": "Carcassonne",
+    "loading": "Инициализация",
+    "preparing": "Подготовка к подсчету очков...",
+    "skip": "Пропустить",
+    "cancel": "Отмена",
+    "yes_reset": "Да, сбросить"
+  },
+  "start": {
+    "players": "Игроки",
+    "custom_names": "Свои имена",
+    "start_button": "Новая игра",
+    "placeholder_name": "%{color}"
+  },
+  "scoring": {
+    "history": "История",
+    "share": "Поделиться",
+    "reset": "Сброс",
+    "reset_confirm": "Сбросить все очки?",
+    "points": "очк"
+  },
+  "history": {
+    "title": "История очков",
+    "empty": "Пока нет сохраненных очков"
+  },
+  "share": {
+    "title": "🏆 Таблица очков Carcassonne 🏆",
+    "shared_from": "Отправлено из приложения Carcassonne Scoring"
+  },
+  "colors": {
+    "Red": "Красный",
+    "Green": "Зеленый",
+    "Blue": "Синий",
+    "Black": "Черный",
+    "Yellow": "Желтый",
+    "Gray": "Серый",
+    "Pink": "Розовый",
+    "Orange": "Оранжевый",
+    "Brown": "Коричневый"
+  }
+}

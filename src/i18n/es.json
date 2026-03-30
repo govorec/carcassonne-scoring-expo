@@ -1,0 +1,42 @@
+{
+  "common": {
+    "app_title": "Carcassonne",
+    "loading": "Inicializando",
+    "preparing": "Preparando las puntuaciones...",
+    "skip": "Saltar carga",
+    "cancel": "Cancelar",
+    "yes_reset": "Sí, reiniciar"
+  },
+  "start": {
+    "players": "Jugadores",
+    "custom_names": "Nombres propios",
+    "start_button": "Nueva Partida",
+    "placeholder_name": "%{color}"
+  },
+  "scoring": {
+    "history": "Historial",
+    "share": "Compartir",
+    "reset": "Reiniciar",
+    "reset_confirm": "¿Reiniciar todas las puntuaciones?",
+    "points": "pts"
+  },
+  "history": {
+    "title": "Historial de puntuaciones",
+    "empty": "No hay puntuaciones registradas"
+  },
+  "share": {
+    "title": "🏆 Puntuaciones de Carcassonne 🏆",
+    "shared_from": "Compartido desde la App de Puntuación Carcassonne"
+  },
+  "colors": {
+    "Red": "Rojo",
+    "Green": "Verde",
+    "Blue": "Azul",
+    "Black": "Negro",
+    "Yellow": "Amarillo",
+    "Gray": "Gris",
+    "Pink": "Rosa",
+    "Orange": "Naranja",
+    "Brown": "Marrón"
+  }
+}

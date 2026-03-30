@@ -1,0 +1,42 @@
+{
+  "common": {
+    "app_title": "Carcassonne",
+    "loading": "初始化中",
+    "preparing": "正在准备计分板...",
+    "skip": "跳过等待",
+    "cancel": "取消",
+    "yes_reset": "是的，重置"
+  },
+  "start": {
+    "players": "玩家人数",
+    "custom_names": "自定义昵称",
+    "start_button": "新游戏",
+    "placeholder_name": "%{color}"
+  },
+  "scoring": {
+    "history": "历史记录",
+    "share": "分享",
+    "reset": "重置",
+    "reset_confirm": "确认重置所有分数？",
+    "points": "分"
+  },
+  "history": {
+    "title": "得分历史",
+    "empty": "暂无得分记录"
+  },
+  "share": {
+    "title": "🏆 卡卡颂得分榜 🏆",
+    "shared_from": "分享自卡卡颂计分板 App"
+  },
+  "colors": {
+    "Red": "红色",
+    "Green": "绿色",
+    "Blue": "蓝色",
+    "Black": "黑色",
+    "Yellow": "黄色",
+    "Gray": "灰色",
+    "Pink": "粉色",
+    "Orange": "橙色",
+    "Brown": "棕色"
+  }
+}

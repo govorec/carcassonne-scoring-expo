@@ -1,0 +1,42 @@
+{
+  "common": {
+    "app_title": "Carcassonne",
+    "loading": "初期化中",
+    "preparing": "スコアボードを準備しています...",
+    "skip": "スキップ",
+    "cancel": "キャンセル",
+    "yes_reset": "はい、リセットします"
+  },
+  "start": {
+    "players": "プレイヤー",
+    "custom_names": "カスタム名",
+    "start_button": "新しいゲーム",
+    "placeholder_name": "%{color}"
+  },
+  "scoring": {
+    "history": "履歴",
+    "share": "共有",
+    "reset": "リセット",
+    "reset_confirm": "すべてのスコアをリセットしますか？",
+    "points": "点"
+  },
+  "history": {
+    "title": "スコア履歴",
+    "empty": "スコアはまだ記録されていません"
+  },
+  "share": {
+    "title": "🏆 カルカソンヌ スコアボード 🏆",
+    "shared_from": "カルカソンヌ スコアボード アプリから共有"
+  },
+  "colors": {
+    "Red": "赤",
+    "Green": "緑",
+    "Blue": "青",
+    "Black": "黒",
+    "Yellow": "黄",
+    "Gray": "グレー",
+    "Pink": "ピンク",
+    "Orange": "オレンジ",
+    "Brown": "茶"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "common": {
+    "app_title": "Carcassonne",
+    "loading": "Initialisation",
+    "preparing": "Préparation du tableau des scores...",
+    "skip": "Passer le chargement",
+    "cancel": "Annuler",
+    "yes_reset": "Oui, réinitialiser"
+  },
+  "start": {
+    "players": "Joueurs",
+    "custom_names": "Noms personnalisés",
+    "start_button": "Nouvelle Partie",
+    "placeholder_name": "%{color}"
+  },
+  "scoring": {
+    "history": "Historique",
+    "share": "Partager",
+    "reset": "Réinitialiser",
+    "reset_confirm": "Réinitialiser tous les scores ?",
+    "points": "pts"
+  },
+  "history": {
+    "title": "Historique des scores",
+    "empty": "Aucun score enregistré"
+  },
+  "share": {
+    "title": "🏆 Tableau des scores Carcassonne 🏆",
+    "shared_from": "Partagé depuis l'application de score Carcassonne"
+  },
+  "colors": {
+    "Red": "Rouge",
+    "Green": "Vert",
+    "Blue": "Bleu",
+    "Black": "Noir",
+    "Yellow": "Jaune",
+    "Gray": "Gris",
+    "Pink": "Rose",
+    "Orange": "Orange",
+    "Brown": "Marron"
+  }
+}

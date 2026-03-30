@@ -1,0 +1,42 @@
+{
+  "common": {
+    "app_title": "Carcassonne",
+    "loading": "Ініціалізація",
+    "preparing": "Підготовка до підрахунку балів...",
+    "skip": "Пропустити",
+    "cancel": "Скасувати",
+    "yes_reset": "Так, скинути"
+  },
+  "start": {
+    "players": "Гравці",
+    "custom_names": "Власні імена",
+    "start_button": "Нова гра",
+    "placeholder_name": "%{color}"
+  },
+  "scoring": {
+    "history": "Історія",
+    "share": "Поділитися",
+    "reset": "Скинути",
+    "reset_confirm": "Скинути всі бали?",
+    "points": "очк"
+  },
+  "history": {
+    "title": "Історія балів",
+    "empty": "Ще немає записаних балів"
+  },
+  "share": {
+    "title": "🏆 Таблиця балів Carcassonne 🏆",
+    "shared_from": "Надіслано з додатку Carcassonne Scoring"
+  },
+  "colors": {
+    "Red": "Червоний",
+    "Green": "Зелений",
+    "Blue": "Синій",
+    "Black": "Чорний",
+    "Yellow": "Жовтий",
+    "Gray": "Сірий",
+    "Pink": "Рожевий",
+    "Orange": "Помаранчевий",
+    "Brown": "Коричневий"
+  }
+}
