@@ -28,6 +28,15 @@
     "title": "🏆 Carcassonne Scoreboard 🏆",
     "shared_from": "Geteilt aus der Carcassonne Scoring App"
   },
+  "settings": {
+    "title": "Einstellungen",
+    "timeout": "Sichtbarkeit der Punkte: %{seconds}s",
+    "language": "Sprache",
+    "reset": "Alle Daten zurücksetzen",
+    "reset_alert_title": "Daten zurücksetzen",
+    "reset_alert_msg": "Sind Sie sicher, dass Sie alle Punkte und den Verlauf löschen möchten?",
+    "version": "v%{version}"
+  },
   "colors": {
     "Red": "Roter",
     "Green": "Grüner",

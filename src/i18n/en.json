@@ -28,6 +28,15 @@
     "title": "🏆 Carcassonne Scoreboard 🏆",
     "shared_from": "Shared from Carcassonne Scoring App"
   },
+  "settings": {
+    "title": "Settings",
+    "timeout": "Score Visibility: %{seconds}s",
+    "language": "Language",
+    "reset": "Reset All Data",
+    "reset_alert_title": "Reset Data",
+    "reset_alert_msg": "Are you sure you want to wipe all scores and history?",
+    "version": "v%{version}"
+  },
   "colors": {
     "Red": "Red",
     "Green": "Green",

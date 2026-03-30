@@ -28,6 +28,15 @@
     "title": "🏆 Таблиця балів Carcassonne 🏆",
     "shared_from": "Надіслано з додатку Carcassonne Scoring"
   },
+  "settings": {
+    "title": "Налаштування",
+    "timeout": "Час відображення балів: %{seconds}с",
+    "language": "Мова",
+    "reset": "Скинути всі дані",
+    "reset_alert_title": "Скидання даних",
+    "reset_alert_msg": "Ви впевнені, що хочете видалити всі бали та історію?",
+    "version": "v%{version}"
+  },
   "colors": {
     "Red": "Червоний",
     "Green": "Зелений",

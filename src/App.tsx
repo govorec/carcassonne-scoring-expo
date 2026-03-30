@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View, Text, TouchableOpacity, useWindowDimensions, TextInput, ScrollView, Animated as RNAnimated, Easing, ImageBackground, FlatList, Keyboard, TouchableWithoutFeedback, Share } from 'react-native';
+import { View, Text, TouchableOpacity, useWindowDimensions, TextInput, ScrollView, Animated as RNAnimated, Easing, ImageBackground, FlatList, Keyboard, TouchableWithoutFeedback, Share, Alert } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { Meeple } from './components/Meeple';
@@ -8,10 +8,12 @@ import { Settings, ArrowLeft, RotateCcw, ChevronLeft, ChevronRight, Loader2, His
 import { useKeepAwake } from 'expo-keep-awake';
 import * as Haptics from 'expo-haptics';
 import Animated, { FadeIn, FadeOut, SlideInRight, SlideOutRight } from 'react-native-reanimated';
+import Constants from 'expo-constants';
+import Slider from '@react-native-community/slider';
 import i18n from './i18n';
 import '../global.css';
 
-type Screen = 'start' | 'scoring' | 'loading' | 'history';
+type Screen = 'start' | 'scoring' | 'loading' | 'history' | 'settings';
 
 interface Player {
   id: number;
@@ -32,15 +34,15 @@ interface HistoryEntry {
 }
 
 const COLORS = [
-  { name: i18n.t('colors.Red'), hex: '#B23B2B', image: require('../assets/Meeple_red.svg') },
-  { name: i18n.t('colors.Green'), hex: '#2EB84B', image: require('../assets/Meeple_green.svg') },
-  { name: i18n.t('colors.Blue'), hex: '#1E40AF', image: require('../assets/Meeple_blue.svg') },
-  { name: i18n.t('colors.Black'), hex: '#1A1A1A', image: require('../assets/Meeple_black.svg') },
-  { name: i18n.t('colors.Yellow'), hex: '#FACC15', image: require('../assets/Meeple_yellow.svg') },
-  { name: i18n.t('colors.Gray'), hex: '#6B7280', image: require('../assets/Meeple_gray.svg') },
-  { name: i18n.t('colors.Pink'), hex: '#E678A7', image: require('../assets/Meeple_pink.svg') },
-  { name: i18n.t('colors.Orange'), hex: '#F97316', image: require('../assets/Meeple_orange.svg') },
-  { name: i18n.t('colors.Brown'), hex: '#78350F', image: require('../assets/Meeple_brown.svg') },
+  { name: 'Red', hex: '#B23B2B', image: require('../assets/Meeple_red.svg') },
+  { name: 'Green', hex: '#2EB84B', image: require('../assets/Meeple_green.svg') },
+  { name: 'Blue', hex: '#1E40AF', image: require('../assets/Meeple_blue.svg') },
+  { name: 'Black', hex: '#1A1A1A', image: require('../assets/Meeple_black.svg') },
+  { name: 'Yellow', hex: '#FACC15', image: require('../assets/Meeple_yellow.svg') },
+  { name: 'Gray', hex: '#6B7280', image: require('../assets/Meeple_gray.svg') },
+  { name: 'Pink', hex: '#E678A7', image: require('../assets/Meeple_pink.svg') },
+  { name: 'Orange', hex: '#F97316', image: require('../assets/Meeple_orange.svg') },
+  { name: 'Brown', hex: '#78350F', image: require('../assets/Meeple_brown.svg') },
 ];
 const STORAGE_KEY = '@carcassonne_game_state';
 
@@ -72,6 +74,8 @@ function MainApp() {
   const [showResetModal, setShowResetModal] = useState(false);
   const [showSkipLoading, setShowSkipLoading] = useState(false);
   const [tempScores, setTempScores] = useState<Record<number, number>>({});
+  const [scoreTimeout, setScoreTimeout] = useState(3000);
+  const [locale, setLocale] = useState(i18n.locale);
 
   const getLayoutConfig = () => {
     const count = players?.length || 0;
@@ -167,6 +171,11 @@ function MainApp() {
           if (data.players) setPlayers(data.players);
           if (data.history) setHistory(data.history);
           if (data.selectedColors) setSelectedColors(data.selectedColors);
+          if (data.scoreTimeout) setScoreTimeout(data.scoreTimeout);
+          if (data.locale) {
+            i18n.locale = data.locale;
+            setLocale(data.locale);
+          }
           if (data.screen && data.screen !== 'loading') {
             setScreen(data.screen);
             console.log('Restored screen:', data.screen);
@@ -182,6 +191,8 @@ function MainApp() {
       }
       console.log('App ready');
     };
+
+    //AsyncStorage.clear().then(() => console.log('Data Cleared!'));
 
     initialize();
 
@@ -208,7 +219,9 @@ function MainApp() {
           isCustomNamingEnabled,
           customNames,
           players,
-          history
+          history,
+          scoreTimeout,
+          locale
         };
         await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       } catch (e) {
@@ -217,7 +230,7 @@ function MainApp() {
     };
 
     saveState();
-  }, [screen, playerCount, selectedColors, isCustomNamingEnabled, customNames, players, history]);
+  }, [screen, playerCount, selectedColors, isCustomNamingEnabled, customNames, players, history, scoreTimeout, locale]);
 
   useEffect(() => {
     if (selectedColors.length < playerCount) {
@@ -255,7 +268,7 @@ function MainApp() {
       color: color.hex,
       image: color.image,
       score: 0,
-      name: isCustomNamingEnabled ? (customNames[index] || color.name) : color.name,
+      name: isCustomNamingEnabled ? (customNames[index] || i18n.t(`colors.${color.name}`)) : i18n.t(`colors.${color.name}`),
     }));
     setPlayers(initialPlayers);
     setHistory([]);
@@ -303,7 +316,7 @@ function MainApp() {
         return next;
       });
       delete timeouts.current[id];
-    }, 5000);
+    }, scoreTimeout);
   };
 
   const resetScores = async () => {
@@ -401,6 +414,14 @@ function MainApp() {
             <View style={{ flex: 1 }}>
               <View style={{ flex: 1, paddingHorizontal: 20, paddingBottom: 20, paddingTop: insets.top }}>
 
+                {/* Settings Button */}
+                <TouchableOpacity
+                  onPress={() => setScreen('settings')}
+                  style={{ position: 'absolute', top: Math.max(insets.top, 20), right: 20, zIndex: 20, padding: 8, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 999 }}
+                >
+                  <Settings color="white" size={24} />
+                </TouchableOpacity>
+
                 {/* Fixed Title Under Notch */}
                 <View style={{ position: 'absolute', top: 80, left: 0, right: 0, alignItems: 'center', zIndex: 10 }}>
                   <Text style={{
@@ -434,7 +455,7 @@ function MainApp() {
                         {isCustomNamingEnabled && (
                           <Animated.View entering={FadeIn} exiting={FadeOut} style={{ width: '100%', paddingHorizontal: 8, marginTop: 12 }}>
                             <TextInput
-                              placeholder={i18n.t('start.placeholder_name', { color: color.name })}
+                              placeholder={i18n.t('start.placeholder_name', { color: i18n.t(`colors.${color.name}`) })}
                               placeholderTextColor="rgba(255,255,255,0.4)"
                               value={customNames[i] || ''}
                               onChangeText={(text) => setCustomNames(prev => ({ ...prev, [i]: text }))}
@@ -739,6 +760,121 @@ function MainApp() {
           </View>
         </Animated.View>
       )}
+
+      {/* Settings Screen UI Overlay */}
+      {screen === 'settings' && (
+        <Animated.View entering={SlideInRight} exiting={SlideOutRight} style={{ flex: 1, backgroundColor: '#262626' }}>
+          <View style={{ paddingTop: Math.max(insets.top, 20), paddingHorizontal: 20, paddingBottom: 20, flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.1)', backgroundColor: '#1F1F1F' }}>
+            <TouchableOpacity onPress={() => setScreen('start')} style={{ padding: 8 }}>
+              <ArrowLeft color="rgba(255,255,255,0.8)" size={28} />
+            </TouchableOpacity>
+            <Text style={{ color: '#FFF', fontSize: 24, paddingLeft: 8, fontWeight: 'bold' }}>{i18n.t('settings.title')}</Text>
+          </View>
+
+          <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 24, gap: 32 }}>
+
+            {/* Timeout Slider */}
+            <View style={{ gap: 12 }}>
+              <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>
+                {i18n.t('settings.timeout', { seconds: (scoreTimeout / 1000).toFixed(1) })}
+              </Text>
+              <Slider
+                style={{ width: '100%', height: 40 }}
+                minimumValue={1000}
+                maximumValue={10000}
+                step={500}
+                value={scoreTimeout}
+                onValueChange={setScoreTimeout}
+                minimumTrackTintColor="#2EB84B"
+                maximumTrackTintColor="rgba(255,255,255,0.2)"
+                thumbTintColor="#FFF"
+              />
+            </View>
+
+            {/* Language Selector */}
+            <View style={{ gap: 16 }}>
+              <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '600' }}>{i18n.t('settings.language')}</Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+                {[
+                  { code: 'en', label: 'English' },
+                  { code: 'de', label: 'Deutsch' },
+                  { code: 'fr', label: 'Français' },
+                  { code: 'es', label: 'Español' },
+                  { code: 'uk', label: 'Українська' },
+                  { code: 'ru', label: 'Русский' },
+                  { code: 'zh', label: '中文' },
+                  { code: 'ja', label: '日本語' },
+                ].map(lang => (
+                  <TouchableOpacity
+                    key={lang.code}
+                    onPress={() => {
+                      i18n.locale = lang.code;
+                      setLocale(lang.code);
+                    }}
+                    style={{
+                      paddingHorizontal: 16,
+                      paddingVertical: 10,
+                      borderRadius: 12,
+                      borderWidth: 1,
+                      backgroundColor: locale === lang.code ? 'rgba(46, 184, 75, 0.2)' : 'rgba(255,255,255,0.05)',
+                      borderColor: locale === lang.code ? '#2EB84B' : 'rgba(255,255,255,0.1)'
+                    }}
+                  >
+                    <Text style={{ color: locale === lang.code ? '#FFF' : 'rgba(255,255,255,0.6)', fontWeight: '600' }}>
+                      {lang.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            {/* Reset Stats */}
+            <View style={{ gap: 12, marginTop: 24 }}>
+              <TouchableOpacity
+                onPress={() => {
+                  Alert.alert(
+                    i18n.t('settings.reset_alert_title'),
+                    i18n.t('settings.reset_alert_msg'),
+                    [
+                      { text: i18n.t('common.cancel'), style: 'cancel' },
+                      {
+                        text: i18n.t('common.yes_reset'),
+                        style: 'destructive',
+                        onPress: async () => {
+                          try {
+                            await AsyncStorage.clear();
+                            setPlayers([]);
+                            setHistory([]);
+                            setPlayerCount(6);
+                            setScoreTimeout(3000);
+                            setCustomNames({});
+                            setSelectedColors(COLORS.slice(0, 6));
+                            setScreen('start');
+                            Alert.alert('Data Cleared', 'App has been successfully reset.');
+                          } catch (error) {
+                            console.error('Failed to clear data', error);
+                          }
+                        }
+                      }
+                    ]
+                  );
+                }}
+                style={{ paddingVertical: 16, backgroundColor: 'rgba(220, 38, 38, 0.2)', borderWidth: 1, borderColor: 'rgba(220, 38, 38, 0.5)', borderRadius: 12, alignItems: 'center' }}
+              >
+                <Text style={{ color: '#ef4444', fontWeight: 'bold', fontSize: 16 }}>{i18n.t('settings.reset')}</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+
+          {/* App Version */}
+          <View style={{ padding: 24, alignItems: 'center', opacity: 0.5 }}>
+            <Text style={{ color: '#FFF', fontSize: 12 }}>
+              {i18n.t('settings.version', { version: Constants.expoConfig?.version || '1.0.0' })}
+            </Text>
+          </View>
+        </Animated.View>
+      )}
+
     </ImageBackground>
   );
 }
