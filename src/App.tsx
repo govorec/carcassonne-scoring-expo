@@ -616,7 +616,7 @@ function MainApp() {
                   }}>
                     {/* Top Row (Info) */}
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: layout.cardPadding }}>
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, flex: 1, paddingRight: 16 }}>
                         <View style={{ position: 'relative' }}>
                           <Meeple color={player.color} size={layout.meepleSize} image={player.image} />
                           {tempScores[player.id] !== undefined && (
@@ -628,22 +628,28 @@ function MainApp() {
                           )}
                         </View>
                         {isCustomNamingEnabled && (
-                          <Text style={{ color: 'rgba(255,255,255,0.8)', fontSize: 16, fontWeight: 'bold' }} numberOfLines={1}>
+                          <Text style={{ color: 'rgba(255,255,255,0.8)', fontSize: 16, fontWeight: 'bold', flexShrink: 1 }} numberOfLines={1}>
                             {player.name}
                           </Text>
                         )}
                       </View>
-                      <Text style={{
-                        color: player.color,
-                        fontSize: layout.scoreFontSize,
-                        fontWeight: 'bold',
-                        letterSpacing: -2,
-                        ...(player.color === '#1A1A1A' ? {
-                          textShadowColor: 'rgba(255,255,255,0.8)',
-                          textShadowOffset: { width: 0, height: 0 },
-                          textShadowRadius: 2
-                        } : {})
-                      }}>
+                      <Text 
+                        adjustsFontSizeToFit 
+                        numberOfLines={1} 
+                        style={{
+                          textAlign: 'right',
+                          minWidth: 60,
+                          color: player.color,
+                          fontSize: layout.scoreFontSize,
+                          fontWeight: 'bold',
+                          letterSpacing: -2,
+                          ...(player.color === '#1A1A1A' ? {
+                            textShadowColor: 'rgba(255,255,255,0.8)',
+                            textShadowOffset: { width: 0, height: 0 },
+                            textShadowRadius: 2
+                          } : {})
+                        }}
+                      >
                         {player.score}
                       </Text>
                     </View>
@@ -651,7 +657,7 @@ function MainApp() {
                     {/* Bottom Row (Buttons) */}
                     <View style={{ flexDirection: 'row', backgroundColor: 'rgba(0,0,0,0.2)', borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.05)' }}>
                       {[
-                        { label: '-10', val: -10 },
+                        { label: '-5', val: -5 },
                         { label: '-1', val: -1 },
                         { label: '+1', val: 1 },
                         { label: '+10', val: 10 },
