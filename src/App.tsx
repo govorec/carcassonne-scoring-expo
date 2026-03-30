@@ -87,7 +87,8 @@ function MainApp() {
         buttonPadding: 16,
         marginVertical: 8,
         headerPaddingTop: insets.top + 16,
-        btnFontSize: 20
+        btnFontSize: 20,
+        tempScoreFontSize: 32
       };
     }
     if (count === 5) {
@@ -98,7 +99,8 @@ function MainApp() {
         buttonPadding: 14,
         marginVertical: 6,
         headerPaddingTop: insets.top + 12,
-        btnFontSize: 18
+        btnFontSize: 18,
+        tempScoreFontSize: 28
       };
     }
     if (count === 6) {
@@ -109,7 +111,8 @@ function MainApp() {
         buttonPadding: 10,
         marginVertical: 4,
         headerPaddingTop: insets.top + 8,
-        btnFontSize: 16
+        btnFontSize: 16,
+        tempScoreFontSize: 22
       };
     }
     return { // 7-9 players
@@ -119,7 +122,8 @@ function MainApp() {
       buttonPadding: 8,
       marginVertical: 3,
       headerPaddingTop: insets.top + 8,
-      btnFontSize: 14
+      btnFontSize: 14,
+      tempScoreFontSize: 18
     };
   };
 
@@ -614,8 +618,8 @@ function MainApp() {
                         <View style={{ position: 'relative' }}>
                           <Meeple color={player.color} size={layout.meepleSize} image={player.image} />
                           {tempScores[player.id] !== undefined && (
-                            <Animated.View entering={FadeIn} exiting={FadeOut} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
-                              <Text style={{ color: '#FFF', fontWeight: '900', fontSize: 24, textShadowColor: '#000', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 4 }}>
+                            <Animated.View entering={FadeIn} exiting={FadeOut} style={{ position: 'absolute', top: -10, left: -30, right: -30, bottom: -10, alignItems: 'center', justifyContent: 'center', zIndex: 10 }}>
+                              <Text style={{ color: '#FFF', fontWeight: '900', fontSize: layout.tempScoreFontSize, textShadowColor: '#000', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 4 }}>
                                 {tempScores[player.id] > 0 ? `+${tempScores[player.id]}` : tempScores[player.id]}
                               </Text>
                             </Animated.View>
