@@ -760,7 +760,18 @@ function MainApp() {
                         {entry.value > 0 ? `+${entry.value}` : entry.value}
                       </Text>
 
-                      <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#FFF', minWidth: 40, textAlign: 'right' }}>
+                      <Text style={{ 
+                        fontSize: 24, 
+                        fontWeight: 'bold', 
+                        color: entry.playerColor, 
+                        minWidth: 40, 
+                        textAlign: 'right',
+                        ...(entry.playerColor === '#1A1A1A' ? {
+                          textShadowColor: 'rgba(255,255,255,0.8)',
+                          textShadowOffset: { width: 0, height: 0 },
+                          textShadowRadius: 2
+                        } : {})
+                      }}>
                         {entry.cumulativeScore}
                       </Text>
                     </View>
@@ -862,7 +873,6 @@ function MainApp() {
                             setCustomNames({});
                             setSelectedColors(COLORS.slice(0, 6));
                             setScreen('start');
-                            Alert.alert('Data Cleared', 'App has been successfully reset.');
                           } catch (error) {
                             console.error('Failed to clear data', error);
                           }
