@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View, Text, TouchableOpacity, useWindowDimensions, TextInput, ScrollView, Animated as RNAnimated, Easing, ImageBackground, FlatList, Keyboard, TouchableWithoutFeedback, Share, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, useWindowDimensions, TextInput, ScrollView, Animated as RNAnimated, Easing, ImageBackground, FlatList, Keyboard, TouchableWithoutFeedback, Share, Alert, Platform } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { Meeple } from './components/Meeple';
@@ -37,7 +37,7 @@ const COLORS = [
   { name: 'Red', hex: '#B23B2B', image: require('../assets/Meeple_red.svg') },
   { name: 'Green', hex: '#2EB84B', image: require('../assets/Meeple_green.svg') },
   { name: 'Blue', hex: '#1E40AF', image: require('../assets/Meeple_blue.svg') },
-  { name: 'Black', hex: '#1A1A1A', image: require('../assets/Meeple_black.svg') },
+  { name: 'Black', hex: '#1A1A1A', image: Platform.OS === 'android' ? require('../assets/Meeple_black_stroke.svg') : require('../assets/Meeple_black.svg') },
   { name: 'Yellow', hex: '#FACC15', image: require('../assets/Meeple_yellow.svg') },
   { name: 'Gray', hex: '#6B7280', image: require('../assets/Meeple_gray.svg') },
   { name: 'Pink', hex: '#E678A7', image: require('../assets/Meeple_pink.svg') },
@@ -82,35 +82,35 @@ function MainApp() {
     if (count <= 4) {
       return {
         meepleSize: 56,
-        scoreFontSize: 64,
-        cardPadding: 16,
-        buttonPadding: 16,
-        marginVertical: 8,
-        headerPaddingTop: insets.top + 16,
-        btnFontSize: 20,
+        scoreFontSize: 64, //Because it is the tallest element in the top half of the card, it stretches the top container to accommodate it.
+        cardPadding: 16, //This is the inner empty wall of the top half of the card. It forces 16px of space above and below the Meeple/Score.
+        buttonPadding: 16, //padding inside the adjustment buttons row (above and below the adjustment buttons)
+        marginVertical: 8, //space outside and between the cards. Each card has 8px of space above it and 8px below it.
+        headerPaddingTop: insets.top + 16, //16
+        btnFontSize: 20, //This is the height of the text for the -5, -1, +1, +10 buttons.
         tempScoreFontSize: 32
       };
     }
     if (count === 5) {
       return {
         meepleSize: 52,
-        scoreFontSize: 60,
-        cardPadding: 14,
-        buttonPadding: 14,
+        scoreFontSize: 56, //60
+        cardPadding: 12, //14
+        buttonPadding: 12, //14
         marginVertical: 6,
-        headerPaddingTop: insets.top + 12,
+        headerPaddingTop: insets.top + 8, //12
         btnFontSize: 18,
         tempScoreFontSize: 28
       };
     }
     if (count === 6) {
       return {
-        meepleSize: 44,
-        scoreFontSize: 50,
+        meepleSize: 46,
+        scoreFontSize: 46, //50
         cardPadding: 10,
         buttonPadding: 10,
         marginVertical: 4,
-        headerPaddingTop: insets.top + 8,
+        headerPaddingTop: insets.top + 4, //8
         btnFontSize: 16,
         tempScoreFontSize: 22
       };
@@ -121,7 +121,7 @@ function MainApp() {
       cardPadding: 8,
       buttonPadding: 8,
       marginVertical: 3,
-      headerPaddingTop: insets.top + 8,
+      headerPaddingTop: insets.top + 0, //8
       btnFontSize: 14,
       tempScoreFontSize: 18
     };
@@ -129,11 +129,14 @@ function MainApp() {
 
   const layout = getLayoutConfig();
 
+  const { height: windowHeight } = useWindowDimensions();
+  //Alert.alert('Window height: ' + Math.round(useWindowDimensions().height) + '\ninsets.top: ' + Math.round(insets.top));
+  //932 - 59 = 873 iphone 15 pro max
+  //923 - 54 = 869 pixel 9
+
   const timeouts = useRef<Record<number, any>>({});
   const playersRef = useRef<Player[]>([]);
   const tempScoresRef = useRef<Record<number, number>>({});
-
-  const { height: windowHeight } = useWindowDimensions();
 
   // Loader rotation string
   const spinValue = useRef(new RNAnimated.Value(0)).current;
