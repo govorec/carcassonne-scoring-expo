@@ -131,8 +131,8 @@ function MainApp() {
 
   const { height: windowHeight } = useWindowDimensions();
   //Alert.alert('Window height: ' + Math.round(useWindowDimensions().height) + '\ninsets.top: ' + Math.round(insets.top));
-  //932 - 59 = 873 iphone 15 pro max
-  //923 - 54 = 869 pixel 9
+  //932 - 59 - 34 = 839  iphone 15 pro max
+  //923 - 54 - 24 = 845  pixel 9
 
   const timeouts = useRef<Record<number, any>>({});
   const playersRef = useRef<Player[]>([]);
@@ -600,10 +600,16 @@ function MainApp() {
             </View>
 
             {/* List of Player Cards */}
-            <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 24 }}>
+            <ScrollView
+              style={{ flex: 1 }}
+              contentContainerStyle={{ flexGrow: 1, paddingBottom: players.length >= 7 ? 24 : insets.bottom }}
+              showsVerticalScrollIndicator={false}
+              scrollEnabled={players.length >= 7}
+            >
               {players.map((player) => {
                 return (
                   <View key={player.id} style={{
+                    flex: (players.length >= 4 && players.length <= 6) ? 1 : undefined,
                     backgroundColor: '#1E1E1E',
                     borderRadius: 16,
                     marginVertical: layout.marginVertical,
@@ -616,7 +622,7 @@ function MainApp() {
                     shadowRadius: 4
                   }}>
                     {/* Top Row (Info) */}
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: layout.cardPadding }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: layout.cardPadding, flex: 1 }}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, flex: 1, paddingRight: 16 }}>
                         <View style={{ position: 'relative' }}>
                           <Meeple color={player.color} size={layout.meepleSize} image={player.image} />
