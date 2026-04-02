@@ -64,6 +64,7 @@ const getMeepleEmoji = (hex: string) => {
 function MainApp() {
   useKeepAwake();
   const insets = useSafeAreaInsets();
+  const { height: windowHeight } = useWindowDimensions();
   const [screen, setScreen] = useState<Screen>('loading');
   const [playerCount, setPlayerCount] = useState(6);
   const [selectedColors, setSelectedColors] = useState(COLORS.slice(0, 6));
@@ -77,9 +78,15 @@ function MainApp() {
   const [scoreTimeout, setScoreTimeout] = useState(3000);
   const [locale, setLocale] = useState(i18n.locale);
 
+  //Alert.alert('height; top; bottom:\n' + Math.round(useWindowDimensions().height) + '; ' + Math.round(insets.top) + '; ' + Math.round(insets.bottom));
+  //useful screen height values
+  //932 - 59 - 34 = 839  iphone 15 pro max
+  //923 - 54 - 24/48 = 845/  pixel 9
+  //640 - 24 - 24/48 = 592/  small phone
+
   const getLayoutConfig = () => {
     const count = players?.length || 0;
-    if (count <= 4) {
+    if (count <= 4 && windowHeight >= 700) {
       return {
         meepleSize: 56,
         scoreFontSize: 64, //Because it is the tallest element in the top half of the card, it stretches the top container to accommodate it.
@@ -91,7 +98,7 @@ function MainApp() {
         tempScoreFontSize: 32
       };
     }
-    if (count === 5) {
+    if (count === 5 && windowHeight >= 700) {
       return {
         meepleSize: 52,
         scoreFontSize: 56, //60
@@ -103,7 +110,7 @@ function MainApp() {
         tempScoreFontSize: 28
       };
     }
-    if (count === 6) {
+    if (count === 6 && windowHeight >= 700) {
       return {
         meepleSize: 46,
         scoreFontSize: 46, //50
@@ -128,13 +135,6 @@ function MainApp() {
   };
 
   const layout = getLayoutConfig();
-
-  const { height: windowHeight } = useWindowDimensions();
-  //Alert.alert('height; top; bottom:\n' + Math.round(useWindowDimensions().height) + '; ' + Math.round(insets.top) + '; ' + Math.round(insets.bottom));
-  //useful screen height values
-  //932 - 59 - 34 = 839  iphone 15 pro max
-  //923 - 54 - 24 = 845  pixel 9
-  //640 - 24 - 24 = 592  small phone
 
   const timeouts = useRef<Record<number, any>>({});
   const playersRef = useRef<Player[]>([]);
