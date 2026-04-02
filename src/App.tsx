@@ -130,9 +130,11 @@ function MainApp() {
   const layout = getLayoutConfig();
 
   const { height: windowHeight } = useWindowDimensions();
-  //Alert.alert('Window height: ' + Math.round(useWindowDimensions().height) + '\ninsets.top: ' + Math.round(insets.top));
+  //Alert.alert('height; top; bottom:\n' + Math.round(useWindowDimensions().height) + '; ' + Math.round(insets.top) + '; ' + Math.round(insets.bottom));
+  //useful screen height values
   //932 - 59 - 34 = 839  iphone 15 pro max
   //923 - 54 - 24 = 845  pixel 9
+  //640 - 24 - 24 = 592  small phone
 
   const timeouts = useRef<Record<number, any>>({});
   const playersRef = useRef<Player[]>([]);
@@ -417,7 +419,7 @@ function MainApp() {
         >
           <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={{ flex: 1 }}>
-              <View style={{ flex: 1, paddingHorizontal: 20, paddingBottom: 20, paddingTop: insets.top }}>
+              <View style={{ flex: 1, paddingHorizontal: 20, paddingBottom: Math.max(insets.bottom, 20), paddingTop: insets.top }}>
 
                 {/* Settings Button */}
                 <TouchableOpacity
@@ -602,9 +604,8 @@ function MainApp() {
             {/* List of Player Cards */}
             <ScrollView
               style={{ flex: 1 }}
-              contentContainerStyle={{ flexGrow: 1, paddingBottom: players.length >= 7 ? 24 : insets.bottom }}
+              contentContainerStyle={{ flexGrow: 1, paddingBottom: Math.max(insets.bottom, 10) + 16 }}
               showsVerticalScrollIndicator={false}
-              scrollEnabled={players.length >= 7}
             >
               {players.map((player) => {
                 return (
@@ -741,7 +742,7 @@ function MainApp() {
               <FlatList
                 data={history}
                 keyExtractor={(item) => item.id}
-                contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
+                contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: Math.max(insets.bottom, 20) }}
                 renderItem={({ item: entry }) => (
                   <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 0.5, borderBottomColor: 'rgba(255,255,255,0.15)' }}>
 
@@ -897,7 +898,7 @@ function MainApp() {
           </ScrollView>
 
           {/* App Version */}
-          <View style={{ padding: 24, alignItems: 'center', opacity: 0.5 }}>
+          <View style={{ paddingHorizontal: 24, paddingVertical: 24, paddingBottom: Math.max(insets.bottom, 24), alignItems: 'center', opacity: 0.5 }}>
             <Text style={{ color: '#FFF', fontSize: 12 }}>
               {i18n.t('settings.version', { version: Constants.expoConfig?.version || '1.0.0' })}
             </Text>
