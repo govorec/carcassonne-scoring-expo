@@ -604,7 +604,7 @@ function MainApp() {
             {/* List of Player Cards */}
             <ScrollView
               style={{ flex: 1 }}
-              contentContainerStyle={{ flexGrow: 1, paddingBottom: Math.max(insets.bottom, 10) + 16 }}
+              contentContainerStyle={{ flexGrow: 1, paddingBottom: insets.bottom + 16 }}
               showsVerticalScrollIndicator={false}
             >
               {players.map((player) => {
