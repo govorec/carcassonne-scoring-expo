@@ -18,7 +18,9 @@
         "simulator": true
       }
     },
-    "production": {}
+    "production": {
+      "distribution": "store"
+    }
   },
   "submit": {
     "production": {}
