@@ -107,8 +107,8 @@ function MainApp() {
       meepleSize: Math.round(base.meepleSize * scale),
       scoreFontSize: Math.round(base.scoreFontSize * scale),
       cardInfoPadding: Math.round(base.cardInfoPadding * scale),
-      btnPaddingVertical: Math.round(base.btnPaddingVertical * scale),
-      btnFontSize: Math.max(13, Math.round(base.btnFontSize * scale)), // Cap minimum size for readability
+      btnPaddingVertical: Math.max(5, Math.round(base.btnPaddingVertical * scale)), // Smaller minimum padding
+      btnFontSize: Math.max(15, Math.round(base.btnFontSize * scale)), // Much more legible minimum font size
       cardMarginVertical: Math.max(2, Math.round(base.cardMarginVertical * scale)), // Keep small separation
       hdrPaddingTopPlus: Math.round(base.hdrPaddingTopPlus * scale),
       hdrPaddingBottom: Math.max(4, Math.round(base.hdrPaddingBottom * scale)),
@@ -116,7 +116,6 @@ function MainApp() {
       hdrIconsContainerPadding: Math.round(base.hdrIconsContainerPadding * scale),
       cardsContainerPaddingBottomPlus: Math.round(base.cardsContainerPaddingBottomPlus * scale),
       tempScoreFontSize: Math.round(base.tempScoreFontSize * scale),
-      btnMinHeight: Math.max(32, Math.round(44 * scale)), // The critical unscaled value that was pushing cards off-screen
     };
   };
 
@@ -590,7 +589,7 @@ function MainApp() {
             {/* List of Player Cards */}
             <ScrollView
               style={{ flex: 1 }}
-              contentContainerStyle={{ flexGrow: 1, paddingBottom: insets.bottom + layout.cardsContainerPaddingBottomPlus }}
+              contentContainerStyle={{ flexGrow: 1 }} // Fix: Remove paddingBottom here to avoid Android flexbox overflow bug
               showsVerticalScrollIndicator={false}
               scrollEnabled={players.length >= 7 || currentSafeHeight < 550} // Failsafe for microscopically small screens
             >
@@ -660,7 +659,7 @@ function MainApp() {
                         <TouchableOpacity
                           key={btn.label}
                           onPress={() => updateScore(player.id, btn.val)}
-                          style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: layout.btnPaddingVertical, minHeight: layout.btnMinHeight }}
+                          style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: layout.btnPaddingVertical }}
                         >
                           <Text style={{
                             color: player.color,
@@ -678,6 +677,9 @@ function MainApp() {
                   </View>
                 );
               })}
+              
+              {/* Reliable Bottom Spacer (Fixes Android flex-padding bounds overflow) */}
+              <View style={{ height: insets.bottom + layout.cardsContainerPaddingBottomPlus }} />
             </ScrollView>
 
             {/* Reset Modal */}
