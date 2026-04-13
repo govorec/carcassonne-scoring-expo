@@ -86,51 +86,36 @@ function MainApp() {
 
   const getLayoutConfig = () => {
     const count = players?.length || 0;
-    if (count <= 4 && windowHeight >= 700) {
-      return {
-        meepleSize: 56,
-        scoreFontSize: 64, //Because it is the tallest element in the top half of the card, it stretches the top container to accommodate it.
-        cardPadding: 16, //This is the inner empty wall of the top half of the card. It forces 16px of space above and below the Meeple/Score.
-        buttonPadding: 16, //padding inside the adjustment buttons row (above and below the adjustment buttons)
-        marginVertical: 8, //space outside and between the cards. Each card has 8px of space above it and 8px below it.
-        headerPaddingTop: insets.top + 16, //16
-        btnFontSize: 20, //This is the height of the text for the -5, -1, +1, +10 buttons.
-        tempScoreFontSize: 32
-      };
-    }
-    if (count === 5 && windowHeight >= 700) {
-      return {
-        meepleSize: 52,
-        scoreFontSize: 56, //60
-        cardPadding: 12, //14
-        buttonPadding: 12, //14
-        marginVertical: 6,
-        headerPaddingTop: insets.top + 8, //12
-        btnFontSize: 18,
-        tempScoreFontSize: 28
-      };
-    }
-    if (count === 6 && windowHeight >= 700) {
-      return {
-        meepleSize: 46,
-        scoreFontSize: 46, //50
-        cardPadding: 10,
-        buttonPadding: 10,
-        marginVertical: 4,
-        headerPaddingTop: insets.top + 4, //8
-        btnFontSize: 16,
-        tempScoreFontSize: 22
-      };
-    }
-    return { // 7-9 players
-      meepleSize: 36,
-      scoreFontSize: 44,
-      cardPadding: 8,
-      buttonPadding: 8,
-      marginVertical: 3,
-      headerPaddingTop: insets.top + 0, //8
-      btnFontSize: 14,
-      tempScoreFontSize: 18
+    const bucket = count <= 4 ? 4 : count === 5 ? 5 : count === 6 ? 6 : 7;
+    
+    // Baseline mapping based on iPhone 15 Pro Max dimensions
+    const baseValues: Record<number, any> = {
+      4: { meepleSize: 56, scoreFontSize: 64, cardInfoPadding: 16, btnPaddingVertical: 16, btnFontSize: 20, cardMarginVertical: 8, hdrPaddingTopPlus: 16, hdrPaddingBottom: 8, hdrIconSize: 28, hdrIconsContainerPadding: 8, cardsContainerPaddingBottomPlus: 16, tempScoreFontSize: 32 },
+      5: { meepleSize: 52, scoreFontSize: 56, cardInfoPadding: 12, btnPaddingVertical: 12, btnFontSize: 18, cardMarginVertical: 6, hdrPaddingTopPlus: 8, hdrPaddingBottom: 8, hdrIconSize: 24, hdrIconsContainerPadding: 8, cardsContainerPaddingBottomPlus: 16, tempScoreFontSize: 28 },
+      6: { meepleSize: 46, scoreFontSize: 46, cardInfoPadding: 10, btnPaddingVertical: 10, btnFontSize: 16, cardMarginVertical: 4, hdrPaddingTopPlus: 4, hdrPaddingBottom: 8, hdrIconSize: 24, hdrIconsContainerPadding: 8, cardsContainerPaddingBottomPlus: 16, tempScoreFontSize: 22 },
+      7: { meepleSize: 36, scoreFontSize: 44, cardInfoPadding: 8, btnPaddingVertical: 8, btnFontSize: 14, cardMarginVertical: 3, hdrPaddingTopPlus: 0, hdrPaddingBottom: 8, hdrIconSize: 24, hdrIconsContainerPadding: 8, cardsContainerPaddingBottomPlus: 16, tempScoreFontSize: 18 }
+    };
+
+    const base = baseValues[bucket];
+
+    // Current screen usable height vs iPhone 15 Pro Max configured safety area
+    const currentSafeHeight = windowHeight - insets.top - insets.bottom;
+    const baselineSafeHeight = 839;
+    const scale = Math.min(1, currentSafeHeight / baselineSafeHeight);
+
+    return {
+      meepleSize: Math.round(base.meepleSize * scale),
+      scoreFontSize: Math.round(base.scoreFontSize * scale),
+      cardInfoPadding: Math.round(base.cardInfoPadding * scale),
+      btnPaddingVertical: Math.round(base.btnPaddingVertical * scale),
+      btnFontSize: Math.round(base.btnFontSize * scale),
+      cardMarginVertical: Math.round(base.cardMarginVertical * scale),
+      hdrPaddingTopPlus: Math.round(base.hdrPaddingTopPlus * scale),
+      hdrPaddingBottom: Math.round(base.hdrPaddingBottom * scale),
+      hdrIconSize: Math.round(base.hdrIconSize * scale),
+      hdrIconsContainerPadding: Math.round(base.hdrIconsContainerPadding * scale),
+      cardsContainerPaddingBottomPlus: Math.round(base.cardsContainerPaddingBottomPlus * scale),
+      tempScoreFontSize: Math.round(base.tempScoreFontSize * scale),
     };
   };
 
@@ -584,19 +569,19 @@ function MainApp() {
         >
           <View style={{ flex: 1 }}>
             {/* Header with explicit Notch Protection */}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 8, paddingTop: layout.headerPaddingTop }}>
-              <TouchableOpacity onPress={() => setScreen('start')} style={{ padding: 8 }}>
-                <ArrowLeft color="rgba(255,255,255,0.8)" size={players.length > 4 ? 24 : 28} />
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingBottom: layout.hdrPaddingBottom, paddingTop: insets.top + layout.hdrPaddingTopPlus }}>
+              <TouchableOpacity onPress={() => setScreen('start')} style={{ padding: layout.hdrIconsContainerPadding }}>
+                <ArrowLeft color="rgba(255,255,255,0.8)" size={layout.hdrIconSize} />
               </TouchableOpacity>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                <TouchableOpacity onPress={() => setScreen('history')} style={{ padding: 8 }}>
-                  <ScrollText color="rgba(255,255,255,0.8)" size={players.length > 4 ? 24 : 28} />
+                <TouchableOpacity onPress={() => setScreen('history')} style={{ padding: layout.hdrIconsContainerPadding }}>
+                  <ScrollText color="rgba(255,255,255,0.8)" size={layout.hdrIconSize} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleShare} style={{ padding: 8 }}>
-                  <Share2 color="rgba(255,255,255,0.8)" size={players.length > 4 ? 24 : 28} />
+                <TouchableOpacity onPress={handleShare} style={{ padding: layout.hdrIconsContainerPadding }}>
+                  <Share2 color="rgba(255,255,255,0.8)" size={layout.hdrIconSize} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => setShowResetModal(true)} style={{ padding: 8 }}>
-                  <RotateCcw color="rgba(255,255,255,0.8)" size={players.length > 4 ? 24 : 28} />
+                <TouchableOpacity onPress={() => setShowResetModal(true)} style={{ padding: layout.hdrIconsContainerPadding }}>
+                  <RotateCcw color="rgba(255,255,255,0.8)" size={layout.hdrIconSize} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -604,8 +589,9 @@ function MainApp() {
             {/* List of Player Cards */}
             <ScrollView
               style={{ flex: 1 }}
-              contentContainerStyle={{ flexGrow: 1, paddingBottom: insets.bottom + 16 }}
+              contentContainerStyle={{ flexGrow: 1, paddingBottom: insets.bottom + layout.cardsContainerPaddingBottomPlus }}
               showsVerticalScrollIndicator={false}
+              scrollEnabled={players.length >= 7}
             >
               {players.map((player) => {
                 return (
@@ -613,7 +599,7 @@ function MainApp() {
                     flex: (players.length >= 4 && players.length <= 6) ? 1 : undefined,
                     backgroundColor: '#1E1E1E',
                     borderRadius: 16,
-                    marginVertical: layout.marginVertical,
+                    marginVertical: layout.cardMarginVertical,
                     marginHorizontal: 16,
                     overflow: 'hidden',
                     elevation: 5,
@@ -623,7 +609,7 @@ function MainApp() {
                     shadowRadius: 4
                   }}>
                     {/* Top Row (Info) */}
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: layout.cardPadding, flex: 1 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: layout.cardInfoPadding, flex: 1 }}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, flex: 1, paddingRight: 16 }}>
                         <View style={{ position: 'relative' }}>
                           <Meeple color={player.color} size={layout.meepleSize} image={player.image} />
@@ -673,7 +659,7 @@ function MainApp() {
                         <TouchableOpacity
                           key={btn.label}
                           onPress={() => updateScore(player.id, btn.val)}
-                          style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: layout.buttonPadding, minHeight: 44 }}
+                          style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: layout.btnPaddingVertical, minHeight: 44 }}
                         >
                           <Text style={{
                             color: player.color,
