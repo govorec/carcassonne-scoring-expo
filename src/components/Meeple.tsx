@@ -27,9 +27,11 @@ export const Meeple: React.FC<MeepleProps> = ({ color, size = 48, className = ""
         }}
       >
         <Image
+          key={color} // React key forces a new native view on color change, fixing the recycling bug
           source={image}
           style={{ width: '100%', height: '100%' }}
           contentFit="contain"
+          transition={100}
         />
       </View>
     );
