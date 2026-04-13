@@ -108,14 +108,15 @@ function MainApp() {
       scoreFontSize: Math.round(base.scoreFontSize * scale),
       cardInfoPadding: Math.round(base.cardInfoPadding * scale),
       btnPaddingVertical: Math.round(base.btnPaddingVertical * scale),
-      btnFontSize: Math.round(base.btnFontSize * scale),
-      cardMarginVertical: Math.round(base.cardMarginVertical * scale),
+      btnFontSize: Math.max(13, Math.round(base.btnFontSize * scale)), // Cap minimum size for readability
+      cardMarginVertical: Math.max(2, Math.round(base.cardMarginVertical * scale)), // Keep small separation
       hdrPaddingTopPlus: Math.round(base.hdrPaddingTopPlus * scale),
-      hdrPaddingBottom: Math.round(base.hdrPaddingBottom * scale),
-      hdrIconSize: Math.round(base.hdrIconSize * scale),
+      hdrPaddingBottom: Math.max(4, Math.round(base.hdrPaddingBottom * scale)),
+      hdrIconSize: Math.max(20, Math.round(base.hdrIconSize * scale)),
       hdrIconsContainerPadding: Math.round(base.hdrIconsContainerPadding * scale),
       cardsContainerPaddingBottomPlus: Math.round(base.cardsContainerPaddingBottomPlus * scale),
       tempScoreFontSize: Math.round(base.tempScoreFontSize * scale),
+      btnMinHeight: Math.max(32, Math.round(44 * scale)), // The critical unscaled value that was pushing cards off-screen
     };
   };
 
@@ -591,7 +592,7 @@ function MainApp() {
               style={{ flex: 1 }}
               contentContainerStyle={{ flexGrow: 1, paddingBottom: insets.bottom + layout.cardsContainerPaddingBottomPlus }}
               showsVerticalScrollIndicator={false}
-              scrollEnabled={players.length >= 7}
+              scrollEnabled={players.length >= 7 || currentSafeHeight < 550} // Failsafe for microscopically small screens
             >
               {players.map((player) => {
                 return (
@@ -659,7 +660,7 @@ function MainApp() {
                         <TouchableOpacity
                           key={btn.label}
                           onPress={() => updateScore(player.id, btn.val)}
-                          style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: layout.btnPaddingVertical, minHeight: 44 }}
+                          style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: layout.btnPaddingVertical, minHeight: layout.btnMinHeight }}
                         >
                           <Text style={{
                             color: player.color,
