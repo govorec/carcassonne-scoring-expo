@@ -588,8 +588,8 @@ function MainApp() {
 
             {/* List of Player Cards */}
             <ScrollView
-              style={{ flex: 1 }}
-              contentContainerStyle={{ flexGrow: 1 }} // Fix: Remove paddingBottom here to avoid Android flexbox overflow bug
+              style={{ flex: 1, marginBottom: insets.bottom }}
+              contentContainerStyle={{ flexGrow: 1, paddingBottom: layout.cardsContainerPaddingBottomPlus }}
               showsVerticalScrollIndicator={false}
               scrollEnabled={players.length >= 7 || currentSafeHeight < 550} // Failsafe for microscopically small screens
             >
@@ -677,9 +677,6 @@ function MainApp() {
                   </View>
                 );
               })}
-              
-              {/* Reliable Bottom Spacer (Fixes Android flex-padding bounds overflow) */}
-              <View style={{ height: insets.bottom + layout.cardsContainerPaddingBottomPlus }} />
             </ScrollView>
 
             {/* Reset Modal */}
