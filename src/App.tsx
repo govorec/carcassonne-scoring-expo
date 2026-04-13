@@ -65,6 +65,7 @@ function MainApp() {
   useKeepAwake();
   const insets = useSafeAreaInsets();
   const { height: windowHeight } = useWindowDimensions();
+  const currentSafeHeight = windowHeight - insets.top - insets.bottom;
   const [screen, setScreen] = useState<Screen>('loading');
   const [playerCount, setPlayerCount] = useState(6);
   const [selectedColors, setSelectedColors] = useState(COLORS.slice(0, 6));
@@ -99,7 +100,6 @@ function MainApp() {
     const base = baseValues[bucket];
 
     // Current screen usable height vs iPhone 15 Pro Max configured safety area
-    const currentSafeHeight = windowHeight - insets.top - insets.bottom;
     const baselineSafeHeight = 839;
     const scale = Math.min(1, currentSafeHeight / baselineSafeHeight);
 
