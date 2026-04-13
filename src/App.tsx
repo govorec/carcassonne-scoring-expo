@@ -88,7 +88,7 @@ function MainApp() {
   const getLayoutConfig = () => {
     const count = players?.length || 0;
     const bucket = count <= 4 ? 4 : count === 5 ? 5 : count === 6 ? 6 : 7;
-    
+
     // Baseline mapping based on iPhone 15 Pro Max dimensions
     const baseValues: Record<number, any> = {
       4: { meepleSize: 56, scoreFontSize: 64, cardInfoPadding: 16, btnPaddingVertical: 16, btnFontSize: 20, cardMarginVertical: 8, hdrPaddingTopPlus: 16, hdrPaddingBottom: 8, hdrIconSize: 28, hdrIconsContainerPadding: 8, cardsContainerPaddingBottomPlus: 16, tempScoreFontSize: 32 },
@@ -588,10 +588,10 @@ function MainApp() {
 
             {/* List of Player Cards */}
             <ScrollView
-              style={{ flex: 1, marginBottom: insets.bottom }}
-              contentContainerStyle={{ flexGrow: 1, paddingBottom: layout.cardsContainerPaddingBottomPlus }}
+              style={{ flex: 1 }}
+              contentContainerStyle={{ flexGrow: 1, paddingBottom: insets.bottom }} // Fix: Remove paddingBottom here to avoid Android flexbox overflow bug
               showsVerticalScrollIndicator={false}
-              scrollEnabled={players.length >= 7 || currentSafeHeight < 550} // Failsafe for microscopically small screens
+              scrollEnabled={players.length >= 7 || currentSafeHeight < 550 || currentSafeHeight < 700} // Failsafe for microscopically small screens
             >
               {players.map((player) => {
                 return (
@@ -677,6 +677,9 @@ function MainApp() {
                   </View>
                 );
               })}
+
+              {/* Reliable Bottom Spacer (Fixes Android flex-padding bounds overflow) */}
+              {/* <View style={{ height: insets.bottom + layout.cardsContainerPaddingBottomPlus }} /> */}
             </ScrollView>
 
             {/* Reset Modal */}
