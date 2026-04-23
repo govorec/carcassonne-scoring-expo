@@ -86,6 +86,7 @@ function MainApp() {
   //640 - 24 - 24/48 = 592/  small phone
 
   const getLayoutConfig = () => {
+    const { width: windowWidth } = useWindowDimensions();
     const count = players?.length || 0;
     const bucket = count <= 4 ? 4 : count === 5 ? 5 : count === 6 ? 6 : 7;
 
@@ -99,23 +100,36 @@ function MainApp() {
 
     const base = baseValues[bucket];
 
-    // Current screen usable height vs iPhone 15 Pro Max configured safety area
+    // Current screen usable height vs iPhone 15 Pro Max (839px safe height)
     const baselineSafeHeight = 839;
-    const scale = Math.min(1, currentSafeHeight / baselineSafeHeight);
+    
+    // Calculate raw scaling factor
+    const rawScale = currentSafeHeight / baselineSafeHeight;
+    
+    // For Tablets (scale > 1), we apply "moderate scaling" so things don't get comically large.
+    // For Phones (scale <= 1), we use the full linear scale to ensure the "No-Scroll" guarantee.
+    const tabletModeration = 0.5; 
+    const scale = rawScale > 1 
+      ? 1 + (rawScale - 1) * tabletModeration 
+      : rawScale;
+
+    // Horizontal scaling for wider screens (Tablets)
+    const horizontalScale = windowWidth > 600 ? 1.2 : 1;
 
     return {
       meepleSize: Math.round(base.meepleSize * scale),
       scoreFontSize: Math.round(base.scoreFontSize * scale),
       cardInfoPadding: Math.round(base.cardInfoPadding * scale),
-      btnPaddingVertical: Math.max(5, Math.round(base.btnPaddingVertical * scale)), // Smaller minimum padding
-      btnFontSize: Math.max(15, Math.round(base.btnFontSize * scale)), // Much more legible minimum font size
-      cardMarginVertical: Math.max(2, Math.round(base.cardMarginVertical * scale)), // Keep small separation
+      btnPaddingVertical: Math.max(5, Math.round(base.btnPaddingVertical * scale)),
+      btnFontSize: Math.max(15, Math.round(base.btnFontSize * scale)),
+      cardMarginVertical: Math.round(base.cardMarginVertical * scale),
       hdrPaddingTopPlus: Math.round(base.hdrPaddingTopPlus * scale),
       hdrPaddingBottom: Math.max(4, Math.round(base.hdrPaddingBottom * scale)),
       hdrIconSize: Math.max(20, Math.round(base.hdrIconSize * scale)),
       hdrIconsContainerPadding: Math.round(base.hdrIconsContainerPadding * scale),
       cardsContainerPaddingBottomPlus: Math.round(base.cardsContainerPaddingBottomPlus * scale),
       tempScoreFontSize: Math.round(base.tempScoreFontSize * scale),
+      cardMarginHorizontal: Math.round(16 * horizontalScale), // Wider margins on tablets
     };
   };
 
@@ -600,7 +614,7 @@ function MainApp() {
                     backgroundColor: '#1E1E1E',
                     borderRadius: 16,
                     marginVertical: layout.cardMarginVertical,
-                    marginHorizontal: 16,
+                    marginHorizontal: layout.cardMarginHorizontal,
                     overflow: 'hidden',
                     elevation: 5,
                     shadowColor: '#000',
