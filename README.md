@@ -1,4 +1,4 @@
-# Carcassonne Score Tracker
+# Carcassonne Scoring App
 
 ![App Concept](https://img.shields.io/badge/Status-Production_Ready-success?style=flat-square) ![Platform](https://img.shields.io/badge/Platform-iOS_%7C_Android-blue?style=flat-square) ![Tech](https://img.shields.io/badge/Framework-React_Native_%7C_Expo-black?style=flat-square)
 
